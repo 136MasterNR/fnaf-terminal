@@ -22,7 +22,7 @@ IF %S_CALC% EQU 0 (
 	SETLOCAL ENABLEDELAYEDEXPANSION
 	IF %CNT% GEQ 60 (
 		SET /A "RND_CHICA=%RANDOM% %% 100 + 1"
-		IF !RND_CHICA! LEQ 90 (
+		IF !RND_CHICA! LEQ 20 (
 			ENDLOCAL
 			SET /A CHICA+=1
 			IF %CHICA% GEQ 5 (ECHO.%STATES% | findstr /C:"doorR") >NUL && SET CHICA=1
@@ -31,9 +31,9 @@ IF %S_CALC% EQU 0 (
 			>refresh SET /P "=" <NUL
 		)
 	)
-	IF %CNT% GEQ 15 (
+	IF %CNT% GEQ 25 (
 		SET /A "RND_BONNIE=%RANDOM% %% 100 + 1"
-		IF !RND_BONNIE! LEQ 90 (
+		IF !RND_BONNIE! LEQ 20 (
 			ENDLOCAL
 			SET /A BONNIE+=1
 			IF %BONNIE% GEQ 5 (ECHO.%STATES% | findstr /C:"doorL") >NUL && SET BONNIE=1
@@ -49,8 +49,9 @@ IF %S_CALC% EQU 0 (
 	ENDLOCAL
 )
 
+:FORCE_REFRESH
 IF EXIST .\refresh (
-	TASKKILL /IM xcopy.exe /F && DEL /Q .\refresh
+	TASKKILL /IM xcopy.exe /F && DEL /Q .\refresh || GOTO :FORCE_REFRESH
 )
 
 IF %CNT% EQU 360 (
