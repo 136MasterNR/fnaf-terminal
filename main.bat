@@ -88,6 +88,7 @@ SET OLD_BONNIE=%BONNIE%
 SET OLD_CHICA=%CHICA%
 SET FREDDY=0
 SET FOXY=0
+SET GOLDENFREDDY=0
 
 
 :RE
@@ -96,6 +97,7 @@ IF %R_DOOR% EQU 1 SET STATES=%STATES%_doorR
 IF %L_DOOR% EQU 1 SET STATES=%STATES%_doorL
 IF %R_LIGHTS% EQU 1 IF %CHICA% GEQ 5 (SET STATES=%STATES%_chica) ELSE SET STATES=%STATES%_lightR
 IF %L_LIGHTS% EQU 1 IF %BONNIE% GEQ 5 (SET STATES=%STATES%_bonnie) ELSE SET STATES=%STATES%_lightL
+IF %GOLDENFREDDY% GEQ 1 SET STATES=%STATES%_goldenfreddy
 
 IF %VIEW%==OFFICE (
 	TYPE ".\assets\office%STATES%%REVERSE%.ans" > CON
@@ -147,20 +149,28 @@ SET OLD_BONNIE=%BONNIE%
 CALL .\choice.cmd
 IF %VIEW%==OFFICE (
 	IF /I %CHOICE.INPUT%==E (
-		CALL :CLOSE_RIGHT
-		GOTO :RE
+		IF %GOLDENFREDDY% EQU 0 (
+			CALL :CLOSE_RIGHT
+			GOTO :RE
+		) ELSE START /B "" CMD /C CALL ".\audiomanager.cmd" START error.mp3 sfx False 100 ^& EXIT >NUL 2>&1
 	)
 	IF /I %CHOICE.INPUT%==Q (
-		CALL :CLOSE_LEFT
-		GOTO :RE
+		IF %GOLDENFREDDY% EQU 0 (
+			CALL :CLOSE_LEFT
+			GOTO :RE
+		) ELSE START /B "" CMD /C CALL ".\audiomanager.cmd" START error.mp3 sfx False 100 ^& EXIT >NUL 2>&1
 	)
 	IF /I %CHOICE.INPUT%==A (
-		CALL :LIGHTS_LEFT
-		GOTO :RE
+		IF %GOLDENFREDDY% EQU 0 (
+			CALL :LIGHTS_LEFT
+			GOTO :RE
+		) ELSE START /B "" CMD /C CALL ".\audiomanager.cmd" START error.mp3 sfx False 100 ^& EXIT >NUL 2>&1
 	)
 	IF /I %CHOICE.INPUT%==D (
-		CALL :LIGHTS_RIGHT
-		GOTO :RE
+		IF %GOLDENFREDDY% EQU 0 (
+			CALL :LIGHTS_RIGHT
+			GOTO :RE
+		) ELSE START /B "" CMD /C CALL ".\audiomanager.cmd" START error.mp3 sfx False 100 ^& EXIT >NUL 2>&1
 	)
 )
 IF %VIEW%==CAMS (
@@ -228,6 +238,7 @@ IF /I %CHOICE.INPUT%==SPACE (
 	) ELSE (
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_down.mp3 camera_down False 100 ^& EXIT >NUL
 		START /B "" CMD /C CALL ".\audiomanager.cmd" STOP camera_up ^& EXIT >NUL
+		CALL :GOLDENFREDDY
 		SET VIEW=OFFICE
 	)
 	GOTO :RE
@@ -371,12 +382,29 @@ IF %L_LIGHTS% EQU 1 (
 EXIT /B 0
 
 
+:GOLDENFREDDY
+IF %GOLDENFREDDY% EQU 1 (
+	SET GOLDENFREDDY=0
+	EXIT /B 0
+)
+SET /A GF_CALC=%RANDOM% %% 100 +1
+IF %GF_CALC% LEQ 7 (
+	SET GOLDENFREDDY=1
+	SET R_DOOR=0
+	SET L_DOOR=0
+	SET R_LIGHTS=0
+	SET L_LIGHTS=0
+)
+EXIT /B 0
+
+
 :GAMEOVER
+CALL ".\audiomanager.cmd" START XSCREAM.mp3 sfx False 100
 TIMEOUT /T 0 >NUL
 TYPE ".\assets\jumpscare%JUMPSCARE%.ans" > CON
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
-TIMEOUT /T 5 /NOBREAK >NUL
+TIMEOUT /T 4 /NOBREAK >NUL
 TYPE ".\assets\gameover.ans" > CON
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
 DEL /Q .\refresh >NUL 2>&1
