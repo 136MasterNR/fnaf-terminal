@@ -79,6 +79,7 @@ SET STATE=office
 SET CAMS_STATE=_1
 SET CAMS_STATES=
 SET VIEW=OFFICE
+SET JUMPSCARE=_chica
 
 :: ANIMATRONICS
 SET BONNIE=0
@@ -104,7 +105,7 @@ IF %VIEW%==OFFICE (
 	ECHO.[27;175H[0m%RGB%94;4;9mE[0m
 	ECHO.[34;175H[0m%RGB%67;53;78mD[0m
 	IF %TAB% EQU 0 ECHO.[3;6H%RGB%22;19;40mPr%RGB%28;25;46mes%RGB%24;20;43ms TAB to mut%RGB%15;12;29me vo%RGB%9;7;21mice %RGB%0;0;0mcall
-	REM TITLE [office%STATES%%REVERSE%]
+	TITLE [office%STATES%%REVERSE%]
 	IF DEFINED REVERSE SET REVERSE=
 	>office_states SET /P "=%STATES%" <NUL
 )
@@ -137,8 +138,7 @@ IF %VIEW%==CAMS (
 	IF NOT %CAMS_STATE%==_11 ECHO.[47;158H%RGB%67;67;67m[1m11[0m
 	IF %TAB% EQU 0 ECHO.[3;6HPress TAB to mute voice call
 )
-
-TITLE [cams%CAMS_STATES%]
+REM TITLE [cams%CAMS_STATES%]
 
 :CHOICE
 SET OLD_CHICA=%CHICA%
@@ -221,11 +221,8 @@ IF %VIEW%==CAMS (
 	)
 )
 
-IF /I %CHOICE.INPUT%==B (
-	IF %BONNIE% EQU 0 (SET BONNIE=5) ELSE SET BONNIE=0
-)
-IF /I %CHOICE.INPUT%==N (
-	IF %CHICA% EQU 0 (SET CHICA=5) ELSE SET CHICA=0
+IF /I %CHOICE.INPUT%==L (
+	GOTO :GAMEOVER
 )
 
 IF /I %CHOICE.INPUT%==SPACE (
@@ -255,13 +252,19 @@ IF %CHOICE.INPUT%==TIMEOUT (
 
 	:: Death detections
 	IF !CHICA! GTR 5 (ECHO.%STATES% | findstr /C:"doorR") >NUL || (
+		SET JUMPSCARE=_chica
 		ENDLOCAL
 		GOTO :GAMEOVER
 	)
 	IF !BONNIE! GTR 5 (ECHO.%STATES% | findstr /C:"doorL") >NUL || (
+		SET JUMPSCARE=_bonnie
 		ENDLOCAL
 		GOTO :GAMEOVER
 	)
+	
+	:: Chica oven SFX updates
+	IF NOT %OLD_CHICA% EQU !CHICA! IF !CHICA! EQU 3 START /B "" CMD /C CALL ".\audiomanager.cmd" START oven.mp3 oven True 9 ^& EXIT >NUL 2>&1
+	IF %OLD_CHICA% EQU 3 IF !CHICA! NEQ 3 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL 2>&1
 
 	:: Cams updates
 	IF %VIEW%==CAMS (
@@ -296,10 +299,6 @@ IF %CHOICE.INPUT%==TIMEOUT (
 			IF NOT %OLD_CHICA% EQU !CHICA! IF !CHICA! EQU 5 ENDLOCAL&GOTO :RE
 		)
 	)
-	
-	:: Chica oven SFX updates
-	IF NOT %OLD_CHICA% EQU !CHICA! IF !CHICA! EQU 3 START /B "" CMD /C CALL ".\audiomanager.cmd" START oven.mp3 oven True 9 ^& EXIT >NUL 2>&1
-	IF %OLD_CHICA% EQU 3 IF !CHICA! NEQ 3 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL 2>&1
 
 	:: Office state updates
 	IF %VIEW%==OFFICE (
@@ -371,9 +370,13 @@ EXIT /B 0
 
 
 :GAMEOVER
-TYPE ".\assets\gameover.ans" > CON
+CALL ".\audiomanager.cmd" START XSCREAM.mp3 sfx False 100
+TIMEOUT /T 0 >NUL
+TYPE ".\assets\jumpscare%JUMPSCARE%.ans" > CON
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
+TIMEOUT /T 5 >NUL
+TYPE ".\assets\gameover.ans" > CON
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
 DEL /Q .\refresh >NUL 2>&1
 PAUSE>NUL
