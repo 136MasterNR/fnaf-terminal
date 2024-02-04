@@ -54,8 +54,10 @@ IF EXIST .\refresh (
 	TASKKILL /IM xcopy.exe /F && DEL /Q .\refresh || GOTO :FORCE_REFRESH
 )
 
-IF %CNT% EQU 360 (
-	TASKKILL /IM xcopy.exe /F
+:FORCE_REFRESH_
+IF %CNT% GEQ 360 (
+	IF NOT EXIST WIN BREAK>WIN
+	TASKKILL /IM xcopy.exe /F || GOTO :FORCE_REFRESH_
 	EXIT
 )
 

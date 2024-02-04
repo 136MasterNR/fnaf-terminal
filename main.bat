@@ -221,10 +221,6 @@ IF %VIEW%==CAMS (
 	)
 )
 
-IF /I %CHOICE.INPUT%==L (
-	GOTO :GAMEOVER
-)
-
 IF /I %CHOICE.INPUT%==SPACE (
 	IF %VIEW%==OFFICE (
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_up.mp3 camera_up False 100 ^& EXIT >NUL
@@ -247,18 +243,24 @@ IF /I %CHOICE.INPUT%== EXIT /B 0
 
 :: Get Updates
 IF %CHOICE.INPUT%==TIMEOUT (
+	:: Win detection
+	IF EXIST WIN (
+		DEL /Q WIN
+		GOTO :WIN
+	)
+
 	CALL .\MOVEMENTS.cmd
 	SETLOCAL ENABLEDELAYEDEXPANSION
 
 	:: Death detections
 	IF !CHICA! GTR 5 (ECHO.%STATES% | findstr /C:"doorR") >NUL || (
-		SET JUMPSCARE=_chica
 		ENDLOCAL
+		SET JUMPSCARE=_chica
 		GOTO :GAMEOVER
 	)
 	IF !BONNIE! GTR 5 (ECHO.%STATES% | findstr /C:"doorL") >NUL || (
-		SET JUMPSCARE=_bonnie
 		ENDLOCAL
+		SET JUMPSCARE=_bonnie
 		GOTO :GAMEOVER
 	)
 	
@@ -370,14 +372,25 @@ EXIT /B 0
 
 
 :GAMEOVER
-CALL ".\audiomanager.cmd" START XSCREAM.mp3 sfx False 100
 TIMEOUT /T 0 >NUL
 TYPE ".\assets\jumpscare%JUMPSCARE%.ans" > CON
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
-TIMEOUT /T 5 >NUL
+TIMEOUT /T 5 /NOBREAK >NUL
 TYPE ".\assets\gameover.ans" > CON
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
 DEL /Q .\refresh >NUL 2>&1
-PAUSE>NUL
+TIMEOUT /T 8 >NUL
+GOTO :LAUNCH
+
+:WIN
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
+CALL ".\audiomanager.cmd" START chimes2.mp3 sfx False 100
+TYPE ".\assets\5am.ans" > CON
+TIMEOUT /T 5 /NOBREAK >NUL
+CALL ".\audiomanager.cmd" START CROWD_SMALL_CHIL_EC049202.mp3 sfx False 100
+TYPE ".\assets\6am.ans" > CON
+TIMEOUT /T 7 >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP sfx ^& EXIT >NUL
 GOTO :LAUNCH
