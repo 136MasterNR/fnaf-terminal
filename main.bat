@@ -22,6 +22,7 @@ IF NOT %1.==READY. IF %1.==LAUNCH. (
 	RD "./temp" /S /Q
 	DEL /Q ".\office_states"
 	DEL /Q ".\MOVEMENTS.cmd"
+	DEL /Q ".\refresh"
 	EXIT 0
 ) ELSE (
 	(START /MIN "Launcher" conhost.exe -- "%~dpnx0" LAUNCH) && (ECHO. Launched [√]
@@ -242,6 +243,9 @@ IF /I %CHOICE.INPUT%==SPACE (
 	IF %VIEW%==OFFICE (
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_up.mp3 camera_up False 100 ^& EXIT >NUL
 		SET VIEW=CAMS
+		IF %GOLDENFREDDY% EQU 1 (
+			START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL 2>&1
+		)
 	) ELSE (
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_down.mp3 camera_down False 100 ^& EXIT >NUL
 		START /B "" CMD /C CALL ".\audiomanager.cmd" STOP camera_up ^& EXIT >NUL
@@ -395,7 +399,8 @@ IF %GOLDENFREDDY% EQU 1 (
 	EXIT /B 0
 )
 SET /A GF_CALC=%RANDOM% %% 100 +1
-IF %GF_CALC% LEQ 5 (
+IF %GF_CALC% LEQ 6 (
+	START /B "" CMD /C CALL ".\audiomanager.cmd" START whispering2.mp3 golden True 100 ^& EXIT >NUL 2>&1
 	SET GOLDENFREDDY=1
 	SET R_DOOR=0
 	SET L_DOOR=0
@@ -421,8 +426,10 @@ GOTO :LAUNCH
 :WIN
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
 CALL ".\audiomanager.cmd" START chimes2.mp3 sfx False 100
 TYPE ".\assets\5am.ans" > CON
+TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
 TIMEOUT /T 4 /NOBREAK >NUL
 CALL ".\audiomanager.cmd" START CROWD_SMALL_CHIL_EC049202.mp3 sfx False 100
 ECHO.[48;2;0;0;0m[27H[80C[38;2;0;0;0;48;2;255;255;255m▄▄▄▄▄[48;2;0;0;0m        [38;2;0;0;0;48;2;255;255;255m▄▄[48;2;0;0;0m    [38;2;0;0;0;48;2;255;255;255m▄▄[48;2;0;0;0m [38;2;0;0;0;48;2;255;255;255m▄▄[48;2;0;0;0m    [38;2;0;0;0;48;2;255;255;255m▄[38;2;0;0;0;48;2;224;224;224m▄[48;2;0;0;0m[m
