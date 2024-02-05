@@ -1,8 +1,6 @@
 @ECHO OFF
 SET "DATA_AUDPLAYER=%CD%\audioplayer.cmd"
-SET "DATA_TMP_A=%CD%\temp\TMP_AUDIO.vbs"
-IF EXIST "%DATA_TMP_A%" SET "DATA_TMP_A=%CD%\temp\TMP_AUDIO2.vbs"
-IF EXIST "%DATA_TMP_A%" SET "DATA_TMP_A=%CD%\temp\TMP_AUDIO.vbs"
+SET "DATA_TMP_A=%CD%\temp\%~n2.vbs"
 SET "DATA_AUD=%CD%\audio"
 CALL :%*
 EXIT /B 0
