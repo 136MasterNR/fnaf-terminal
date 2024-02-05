@@ -20,6 +20,8 @@ IF NOT %1.==READY. IF %1.==LAUNCH. (
 	))
 	TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T
 	RD "./temp" /S /Q
+	DEL /Q ".\office_states"
+	DEL /Q ".\MOVEMENTS.cmd"
 	EXIT 0
 ) ELSE (
 	(START /MIN "Launcher" conhost.exe -- "%~dpnx0" LAUNCH) && (ECHO. Launched [√]
@@ -320,7 +322,7 @@ IF %CHOICE.INPUT%==TIMEOUT (
 
 	:: Office state updates
 	IF %VIEW%==OFFICE (
-		(ECHO.%STATES% | findstr /C:"lightR" /C:"CHICA") >NUL && (
+		(ECHO.%STATES% | findstr /C:"lightR" /C:"chica") >NUL && (
 			IF NOT %OLD_CHICA% EQU !CHICA! (
 				IF %OLD_CHICA% EQU 5 IF !CHICA! LSS 5 (
 					ENDLOCAL
@@ -393,7 +395,7 @@ IF %GOLDENFREDDY% EQU 1 (
 	EXIT /B 0
 )
 SET /A GF_CALC=%RANDOM% %% 100 +1
-IF %GF_CALC% LEQ 7 (
+IF %GF_CALC% LEQ 5 (
 	SET GOLDENFREDDY=1
 	SET R_DOOR=0
 	SET L_DOOR=0
