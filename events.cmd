@@ -15,7 +15,7 @@ BREAK>MOVEMENTS.cmd
 :: AI difficulty
 SET MO_CHICA=0
 SET MO_BONNIE=0
-SET MO_FOXY=20
+SET MO_FOXY=4
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
@@ -32,12 +32,12 @@ IF EXIST cams_state (
 ) ELSE SET CAMS_STATES=_
 
 :: Increase MO based on the timer
-REM IF !TIMER! EQU 25 SET /A MO_BONNIE+=1 &:: 0.5 minutes in
-REM IF !TIMER! EQU 60 SET /A MO_CHICA+=1 &:: 1.0 minutes in
-REM IF !TIMER! EQU 150 SET /A MO_BONNIE+=1 &:: 2.5 minutes in
-REM IF !TIMER! EQU 300 SET /A MO_CHICA+=2 &:: 5 minutes in
-REM IF !TIMER! EQU 420 SET /A MO_CHICA+=1 &:: 7 minutes in
-REM IF !TIMER! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
+IF !TIMER! EQU 25 SET /A MO_BONNIE+=1 &:: 0.5 minutes in
+IF !TIMER! EQU 60 SET /A MO_CHICA+=1 &:: 1.0 minutes in
+IF !TIMER! EQU 150 SET /A MO_BONNIE+=1 &:: 2.5 minutes in
+IF !TIMER! EQU 300 SET /A MO_CHICA+=2 &:: 5 minutes in
+IF !TIMER! EQU 420 SET /A MO_CHICA+=1 &:: 7 minutes in
+IF !TIMER! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
 
 :: Movement Calculations
 IF !S_CALC! EQU 0 (
@@ -80,15 +80,16 @@ IF !S_CALC! EQU 0 (
 
 IF !CAMS_STATES!==_5 SET TIMER_FOXY=0
 SET /A F_CALC=TIMER_FOXY %% 5
+SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
 
 :: Specifically for Foxy
-IF !F_CALC! EQU 0 IF %FOXY% LSS 3 (
+IF !F_CALC! EQU 0 IF !RND_FOXY! LEQ !MO_FOXY! IF !FOXY! LSS 3 (
 	SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
 	IF !RND_FOXY! LEQ !MO_FOXY! (
 		IF NOT !CAMS_STATES!==_5 (
 			SET /A FOXY+=1
 			>refresh SET /P "=" <NUL
-			ECHO.MO: !FOXY! FOXY, TIMER: %TIMER_FOXY%
+			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
 		)
 	)
 )
@@ -98,7 +99,7 @@ IF EXIST SEEN_FOXY (
 		SET S_TIMER_FOXY=7
 		SET /A FOXY+=1
 		>refresh SET /P "=" <NUL
-		ECHO.MO: !FOXY! FOXY, TIMER: %TIMER_FOXY%
+		ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
 	) ELSE IF !S_TIMER_FOXY! EQU 5 (
 		(ECHO.!STATES! | findstr /C:"doorL") >NUL && (
 			SET FOXY=0
@@ -109,7 +110,7 @@ IF EXIST SEEN_FOXY (
 			DEL /Q ".\SEEN_FOXY"
 		)
 		>refresh SET /P "=" <NUL
-		ECHO.MO: !FOXY! FOXY, TIMER: %TIMER_FOXY%
+		ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
 	) ELSE (
 		IF !S_TIMER_FOXY! LSS 5 (
 			SET /A S_TIMER_FOXY+=1
