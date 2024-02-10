@@ -15,8 +15,8 @@ IF NOT %1.==READY. IF %1.==LAUNCH. (
 	ECHO.This is the game's launcher, do not close.
 	START /WAIT "Launcher" "conhost.exe" -- "%~dpnx0" READY
 	ECHO.Shutting down...
-	(TASKKILL /F /FI "WINDOWTITLE eq WSAudio*" /IM "cmd.exe" /T | FINDSTR ":" && (
-		TASKKILL /F /FI "WINDOWTITLE eq Administrator:  WSAudio*" /IM "cmd.exe" /T
+	(TASKKILL /F /FI "WINDOWTITLE eq mpg123*" /IM "cmd.exe" /T | FINDSTR ":" && (
+		TASKKILL /F /FI "WINDOWTITLE eq Administrator:  mpg123*" /IM "cmd.exe" /T
 	))
 	TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T
 	RD "./temp" /S /Q
@@ -96,6 +96,7 @@ SET OLD_BONNIE=%BONNIE%
 SET OLD_CHICA=%CHICA%
 SET FREDDY=0
 SET FOXY=0
+SET OLD_FOXY=0
 SET GOLDENFREDDY=0
 
 
@@ -416,6 +417,8 @@ TIMEOUT /T 0 >NUL
 TYPE ".\assets\jumpscare%JUMPSCARE%.ans" > CON
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
 TIMEOUT /T 4 /NOBREAK >NUL
 TYPE ".\assets\gameover.ans" > CON
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
@@ -427,21 +430,13 @@ GOTO :LAUNCH
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
 CALL ".\audiomanager.cmd" START chimes2.mp3 sfx False 100
 TYPE ".\assets\5am.ans" > CON
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
 TIMEOUT /T 4 /NOBREAK >NUL
 CALL ".\audiomanager.cmd" START CROWD_SMALL_CHIL_EC049202.mp3 sfx False 100
-ECHO.[48;2;0;0;0m[27H[80C[38;2;0;0;0;48;2;255;255;255m▄▄▄▄▄[48;2;0;0;0m        [38;2;0;0;0;48;2;255;255;255m▄▄[48;2;0;0;0m    [38;2;0;0;0;48;2;255;255;255m▄▄[48;2;0;0;0m [38;2;0;0;0;48;2;255;255;255m▄▄[48;2;0;0;0m    [38;2;0;0;0;48;2;255;255;255m▄[38;2;0;0;0;48;2;224;224;224m▄[48;2;0;0;0m[m
-ECHO.[26H[48;2;0;0;0m[78C [48;2;255;255;255m  [38;2;255;255;255;48;2;0;0;0m▄▄▄▄[48;2;255;255;255m  [48;2;0;0;0m      [48;2;255;255;255m  [48;2;0;0;0m    [48;2;255;255;255m  [48;2;0;0;0m [48;2;255;255;255m  [48;2;0;0;0m    [48;2;255;255;255m [48;2;224;224;224m [48;2;0;0;0m[m
-TIMEOUT /T 0 >NUL
-ECHO.[25H[48;2;0;0;0m[78C [48;2;255;255;255m  [38;2;0;0;0;48;2;255;255;255m▄▄▄▄[38;2;255;255;255;48;2;69;69;69m▄[38;2;255;255;255;48;2;6;6;6m▄[48;2;0;0;0m      [48;2;255;255;255m  [38;2;255;255;255;48;2;69;69;69m▄▄▄▄[48;2;255;255;255m  [48;2;0;0;0m [48;2;255;255;255m  [48;2;0;0;0m [38;2;0;0;0;48;2;255;255;255m▄▄[48;2;0;0;0m [48;2;255;255;255m [48;2;224;224;224m [48;2;0;0;0m[m
-TIMEOUT /T 0 >NUL
-ECHO.[24H[48;2;0;0;0m[78C [48;2;255;255;255m  [38;2;255;255;255;48;2;0;0;0m▄▄▄▄[48;2;0;0;0m        [48;2;255;255;255m  [48;2;0;0;0m    [48;2;255;255;255m  [48;2;0;0;0m [48;2;255;255;255m  [48;2;0;0;0m [48;2;255;255;255m  [48;2;0;0;0m [48;2;255;255;255m [48;2;224;224;224m [48;2;0;0;0m[m
-TIMEOUT /T 0 >NUL
-ECHO.[23H[48;2;0;0;0m[78C  [48;2;255;255;255m  [38;2;0;0;0;48;2;108;108;108m▄▄▄[48;2;0;0;0m        [48;2;255;255;255m  [38;2;0;0;0;48;2;108;108;108m▄▄▄▄[48;2;255;255;255m  [48;2;0;0;0m [48;2;255;255;255m   [48;2;0;0;0m [48;2;255;255;255m   [48;2;224;224;224m [48;2;0;0;0m[m
-TIMEOUT /T 0 >NUL
-ECHO.[22H[48;2;0;0;0m[78C    [38;2;255;255;255;48;2;0;0;0m▄▄▄[48;2;0;0;0m          [38;2;255;255;255;48;2;0;0;0m▄▄▄▄[38;2;17;17;17;48;2;0;0;0m▄[48;2;0;0;0m  [38;2;255;255;255;48;2;0;0;0m▄▄[48;2;0;0;0m    [38;2;255;255;255;48;2;0;0;0m▄[38;2;224;224;224;48;2;0;0;0m▄[48;2;0;0;0m[m
+CALL ".\assets\6am.cmd"
 TIMEOUT /T 7 >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP sfx ^& EXIT >NUL
 GOTO :LAUNCH

@@ -56,11 +56,11 @@ IF !S_CALC! EQU 0 (
 		) ELSE IF !BONNIE! EQU 3 (
 			SET /A BONNIE=%RANDOM% %% 3 + 2
 		) ELSE IF !BONNIE! EQU 4 (
-			SET /A BONNIE+=1
+			(ECHO.!STATES! | findstr /C:"doorL") >NUL && SET /A BONNIE=%RANDOM% %% 2 + 3 || SET /A BONNIE+=1
 		) ELSE IF !BONNIE! EQU 5 (
 			SET /A BONNIE+=1
 		) ELSE (
-			SET /A BONNIE=%RANDOM% %% 2 + 2
+			SET /A BONNIE+=1
 		)
 		IF !BONNIE! GEQ 5 (ECHO.!STATES! | findstr /C:"doorL") >NUL && SET /A BONNIE=%RANDOM% %% 3 + 1
 		ECHO.MO: !BONNIE! BONNIE
