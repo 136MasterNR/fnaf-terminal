@@ -1,9 +1,11 @@
 @TITLE FNaF Events
 @ECHO OFF
-SET CNT=1
+SET TIMER=1
 SET CHICA=0
 SET BONNIE=0
 SET FOXY=0
+SET TIMER_FOXY=1
+SET S_TIMER_FOXY=0
 
 ECHO.MO: %CHICA% CHICA
 ECHO.MO: %BONNIE% BONNIE
@@ -19,9 +21,9 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 
 
 :TIMER
-TITLE FNaF Events - TIME: !CNT!
+TITLE FNaF Events - TIME: !TIMER!
 
-SET /A S_CALC=CNT %% 5
+SET /A S_CALC=TIMER %% 5
 
 SET STATES=
 SET /P STATES=<office_states
@@ -30,12 +32,12 @@ IF EXIST cams_state (
 ) ELSE SET CAMS_STATES=_
 
 :: Increase MO based on the timer
-REM IF !CNT! EQU 25 SET /A MO_BONNIE+=1 &:: 0.5 minutes in
-REM IF !CNT! EQU 60 SET /A MO_CHICA+=1 &:: 1.0 minutes in
-REM IF !CNT! EQU 150 SET /A MO_BONNIE+=1 &:: 2.5 minutes in
-REM IF !CNT! EQU 300 SET /A MO_CHICA+=2 &:: 5 minutes in
-REM IF !CNT! EQU 420 SET /A MO_CHICA+=1 &:: 7 minutes in
-REM IF !CNT! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
+REM IF !TIMER! EQU 25 SET /A MO_BONNIE+=1 &:: 0.5 minutes in
+REM IF !TIMER! EQU 60 SET /A MO_CHICA+=1 &:: 1.0 minutes in
+REM IF !TIMER! EQU 150 SET /A MO_BONNIE+=1 &:: 2.5 minutes in
+REM IF !TIMER! EQU 300 SET /A MO_CHICA+=2 &:: 5 minutes in
+REM IF !TIMER! EQU 420 SET /A MO_CHICA+=1 &:: 7 minutes in
+REM IF !TIMER! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
 
 :: Movement Calculations
 IF !S_CALC! EQU 0 (
@@ -76,32 +78,54 @@ IF !S_CALC! EQU 0 (
 	)
 )
 
-:: Specifically for foxy
-IF !S_CALC! EQU 0 (
-	IF %FOXY% LSS 3 (
-		SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
-		IF !RND_FOXY! LEQ !MO_FOXY! (
-			IF NOT !CAMS_STATES!==_5 (
-				SET /A FOXY+=1
-				ECHO.MO: !FOXY! FOXY
-				>refresh SET /P "=" <NUL
-			)
+IF !CAMS_STATES!==_5 SET TIMER_FOXY=0
+SET /A F_CALC=TIMER_FOXY %% 5
+
+:: Specifically for Foxy
+IF !F_CALC! EQU 0 IF %FOXY% LSS 3 (
+	SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
+	IF !RND_FOXY! LEQ !MO_FOXY! (
+		IF NOT !CAMS_STATES!==_5 (
+			SET /A FOXY+=1
+			>refresh SET /P "=" <NUL
+			ECHO.MO: !FOXY! FOXY, TIMER: %TIMER_FOXY%
 		)
-	) ELSE IF EXIST FOXY_SEEN (
-		(ECHO.!STATES! | findstr /C:"doorL") >NUL && SET FOXY=0
-		DEL /Q ".\FOXY_SEEN"
-		>refresh SET /P "=" <NUL
-	) ELSE (
-		SET /A FOXY+=1
 	)
 )
 
+IF EXIST SEEN_FOXY (
+	IF !S_TIMER_FOXY! EQU 4 (
+		SET S_TIMER_FOXY=7
+		SET /A FOXY+=1
+		>refresh SET /P "=" <NUL
+		ECHO.MO: !FOXY! FOXY, TIMER: %TIMER_FOXY%
+	) ELSE IF !S_TIMER_FOXY! EQU 5 (
+		(ECHO.!STATES! | findstr /C:"doorL") >NUL && (
+			SET FOXY=0
+			SET S_TIMER_FOXY=0
+			DEL /Q ".\SEEN_FOXY"
+		) || (
+			SET /A FOXY+=1
+			DEL /Q ".\SEEN_FOXY"
+		)
+		>refresh SET /P "=" <NUL
+		ECHO.MO: !FOXY! FOXY, TIMER: %TIMER_FOXY%
+	) ELSE (
+		IF !S_TIMER_FOXY! LSS 5 (
+			SET /A S_TIMER_FOXY+=1
+		)
+		IF !S_TIMER_FOXY! GTR 5 (
+			SET /A S_TIMER_FOXY-=1
+		)
+	)
+)
 :: Send the new movements to the main game
-IF !S_CALC! EQU 0 (
+IF EXIST .\refresh (
 		ECHO SET CHICA=!CHICA!
 		ECHO SET BONNIE=!BONNIE!
 		ECHO SET FOXY=!FOXY!
 ) >MOVEMENTS.cmd
+
 
 :: Send a "refesh animatronic movements" signal to the main game, if needed (forced)
 :FORCE_REFRESH
@@ -111,15 +135,17 @@ IF EXIST .\refresh (
 
 :: If survived 530 seconds, send a "win" signal to the main game (forced)
 :FORCE_REFRESH_
-IF !CNT! GEQ 530 (
+IF !TIMER! GEQ 530 (
 	IF NOT EXIST WIN BREAK>WIN
 	TASKKILL /IM xcopy.exe /F || GOTO :FORCE_REFRESH_
 	ENDLOCAL
 	EXIT 0
 )
 
-:: Timer
-SET /A CNT+=1
+
+:: Timers
+SET /A TIMER+=1
+SET /A TIMER_FOXY+=1
 TIMEOUT /T 1 >NUL
 
 :: Repeat
