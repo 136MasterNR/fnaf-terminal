@@ -7,6 +7,8 @@ SET FOXY=0
 SET TIMER_FOXY=1
 SET S_TIMER_FOXY=0
 
+SET BATTERY=10000
+
 BREAK>MOVEMENTS.cmd
 
 :: AI difficulty
@@ -130,6 +132,7 @@ IF EXIST SEEN_FOXY (
 	)
 )
 
+
 :: Send the new movements to the main game
 IF EXIST .\refresh (
 		ECHO SET CHICA=!CHICA!
@@ -138,11 +141,36 @@ IF EXIST .\refresh (
 ) >MOVEMENTS.cmd
 
 
+:: Battery
+SET /A B_CALC=TIMER %% 5
+
+SET DRAIN=4
+(ECHO.!STATES! | findstr /C:"_doorL") >NUL && SET /A DRAIN+=12
+(ECHO.!STATES! | findstr /C:"_doorR") >NUL && SET /A DRAIN+=12
+(ECHO.!STATES! | findstr /C:"_lightL") >NUL && SET /A DRAIN+=12
+(ECHO.!STATES! | findstr /C:"_lightR") >NUL && SET /A DRAIN+=12
+(ECHO.!STATES! | findstr /C:"_bonnie") >NUL && SET /A DRAIN+=12
+(ECHO.!STATES! | findstr /C:"_chica") >NUL && SET /A DRAIN+=12
+IF EXIST cams_state SET /A DRAIN+=12
+SET /A BATTERY-=DRAIN
+SET /A SEND_BATTERY=BATTERY/100
+ECHO.Battery: !SEND_BATTERY! (Real: %BATTERY% - Drain: %DRAIN%)
+ECHO.!SEND_BATTERY!>BATTERY
+IF !BATTERY! LEQ 0 >refresh SET /P "=" <NUL
+
 :: Send a "refesh animatronic movements" signal to the main game, if needed (forced)
 :FORCE_REFRESH
 IF EXIST .\refresh (
-	TASKKILL /IM xcopy.exe /F && DEL /Q .\refresh || GOTO :FORCE_REFRESH
+	TASKKILL /IM xcopy.exe /F >NUL 2>&1 && (
+		DEL /Q .\refresh
+		ECHO.[+] Sent update to the main process^^^!
+	) || (
+		ECHO.[-] Attempting to update the main process...
+		GOTO :FORCE_REFRESH
+	)
 )
+
+IF !BATTERY! LEQ 0 EXIT 0
 
 :: If survived 530 seconds, send a "win" signal to the main game (forced)
 :FORCE_REFRESH_
@@ -152,7 +180,6 @@ IF !TIMER! GEQ 530 (
 	ENDLOCAL
 	EXIT 0
 )
-
 
 :: Timers
 SET /A TIMER+=1

@@ -25,6 +25,7 @@ IF NOT %1.==READY. IF %1.==LAUNCH. (
 	DEL /Q ".\MOVEMENTS.cmd"
 	DEL /Q ".\refresh"
 	DEL /Q ".\SEEN_FOXY"
+	DEL /Q ".\BATTERY"
 	EXIT 0
 ) ELSE (
 	(START /MIN "Launcher" conhost.exe -- "%~dpnx0" LAUNCH) && (ECHO. Launched [√]
@@ -88,6 +89,7 @@ SET CAMS_STATE=_1
 SET CAMS_STATES=
 SET VIEW=OFFICE
 SET JUMPSCARE=_chica
+SET BATTERY=99
 
 :: ANIMATRONICS
 SET BONNIE=0
@@ -162,6 +164,11 @@ IF %VIEW%==CAMS (
 REM TITLE [cams%CAMS_STATES%]
 
 :CHOICE
+:: Update battery
+IF EXIST BATTERY SET /P BATTERY=<BATTERY
+ECHO.[2;172HBattery: %BATTERY%
+IF %BATTERY% LEQ 0 GOTO :OUTAGE
+
 SET OLD_CHICA=%CHICA%
 SET OLD_BONNIE=%BONNIE%
 SET OLD_FOXY=%FOXY%
@@ -257,6 +264,9 @@ IF /I %CHOICE.INPUT%==SPACE (
 		SET VIEW=CAMS
 		IF %GOLDENFREDDY% EQU 1 (
 			START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL 2>&1
+		)
+		IF %CAMS_STATE%==_8 IF %FOXY% EQU 3 (
+			SET /A FOXY+=1
 		)
 	) ELSE (
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_down.mp3 camera_down False 100 ^& EXIT >NUL
@@ -451,6 +461,29 @@ IF %GF_CALC% LEQ 6 (
 	SET R_LIGHTS=0
 	SET L_LIGHTS=0
 )
+EXIT /B 0
+
+
+:OUTAGE
+TYPE ".\assets\office_outage.ans" > CON
+START /B "" CMD /C CALL ".\audiomanager.cmd" START powerdown.mp3 powerdown False 95 ^& EXIT >NUL 2>&1
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
+TIMEOUT /T 10 /NOBREAK >NUL
+CALL ".\audiomanager.cmd" START musicbox.mp3 musicbox False 90
+SETLOCAL ENABLEDELAYEDEXPANSION
+FOR /L %%N IN (1, 1, 11) DO (
+	TIMEOUT /T 1 /NOBREAK >NUL
+	TYPE ".\assets\office_outage_freddy.ans" > CON
+	TYPE ".\assets\office_outage.ans" > CON
+)
+ENDLOCAL
+CALL ".\audiomanager.cmd" STOP musicbox
+TIMEOUT /T 4 /NOBREAK >NUL
+SET JUMPSCARE=_bonnie
+GOTO :GAMEOVER
 EXIT /B 0
 
 
