@@ -96,8 +96,10 @@ SET TIME=12
 :: ANIMATRONICS
 SET BONNIE=0
 SET OLD_BONNIE=%BONNIE%
+SET WS_BONNIE=%BONNIE%
 SET CHICA=0
 SET OLD_CHICA=%CHICA%
+SET WS_CHICA=%CHICA%
 SET FREDDY=0
 SET FOXY=0
 SET OLD_FOXY=%FOXY%
@@ -168,8 +170,8 @@ REM TITLE [cams%CAMS_STATES%]
 :CHOICE
 :: Update battery and time
 IF EXIST BATTERY SET /P BATTERY=<BATTERY
-IF %VIEW%==OFFICE ( ECHO.[3;172H%RGB%26;22;45mPower:%RGB%25;21;44m %RGB%34;30;53m%BATTERY%%% ) ELSE ECHO.[4;171H%RGB%40;40;40mPower: %BATTERY%%% 
 IF %BATTERY% LEQ 0 GOTO :OUTAGE
+IF %VIEW%==OFFICE ( ECHO.[3;172H%RGB%26;22;45mPower:%RGB%25;21;44m %RGB%34;30;53m%BATTERY%%% ) ELSE ECHO.[4;171H%RGB%40;40;40mPower: %BATTERY%%% 
 
 IF EXIST TIME SET /P TIME=<TIME
 IF %VIEW%==OFFICE ( ECHO.[2;178H%RGB%32;26;50m%TIME% AM ) ELSE ECHO.[3;177H%RGB%40;40;40m%TIME% AM 
@@ -469,29 +471,70 @@ EXIT /B 0
 
 
 :OUTAGE
+START /B "" CMD /C CALL ".\audiomanager.cmd" START powerdown.mp3 powerdown False 100 ^& EXIT >NUL 2>&1
 IF NOT %VIEW%==OFFICE (
 	START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_down.mp3 camera_down False 100 ^& EXIT >NUL
 	START /B "" CMD /C CALL ".\audiomanager.cmd" STOP camera_up ^& EXIT >NUL
 )
 TYPE ".\assets\office_outage.ans" > CON
-START /B "" CMD /C CALL ".\audiomanager.cmd" START powerdown.mp3 powerdown False 95 ^& EXIT >NUL 2>&1
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
-TIMEOUT /T 10 /NOBREAK >NUL
+TIMEOUT /T 14 /NOBREAK >NUL
 CALL ".\audiomanager.cmd" START musicbox.mp3 musicbox False 90
-SETLOCAL ENABLEDELAYEDEXPANSION
-FOR /L %%N IN (1, 1, 11) DO (
-	TIMEOUT /T 1 /NOBREAK >NUL
-	TYPE ".\assets\office_outage_freddy.ans" > CON
-	TIMEOUT /T 0 /NOBREAK >NUL
-	TYPE ".\assets\office_outage.ans" > CON
-)
-ENDLOCAL
+
+(
+	ECHO @ECHO OFF
+	ECHO :L
+	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
+	ECHO HELP^>NUL
+	ECHO HELP^>NUL
+	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
+	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
+	ECHO HELP^>NUL
+	ECHO HELP^>NUL
+	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
+	ECHO IF EXIST STOP EXIT
+	ECHO TIMEOUT /T 0 /NOBREAK ^>NUL
+	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
+	ECHO HELP^>NUL
+	ECHO HELP^>NUL
+	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
+	ECHO IF EXIST STOP EXIT
+	ECHO TIMEOUT /T 0 /NOBREAK ^>NUL
+	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
+	ECHO HELP^>NUL
+	ECHO HELP^>NUL
+	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
+	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
+	ECHO HELP^>NUL
+	ECHO HELP^>NUL
+	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
+	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
+	ECHO HELP^>NUL
+	ECHO HELP^>NUL
+	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
+	ECHO IF EXIST STOP EXIT
+	ECHO TIMEOUT /T 0 /NOBREAK ^>NUL
+	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
+	ECHO HELP^>NUL
+	ECHO HELP^>NUL
+	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
+	ECHO IF EXIST STOP EXIT
+	ECHO TIMEOUT /T 0 /NOBREAK ^>NUL
+	ECHO GOTO :L
+)>".\temp\outagefreddy.cmd"
+START /B "" CMD /C CALL ".\temp\outagefreddy.cmd" ^& EXIT 2>NUL
+TIMEOUT /T 20 /NOBREAK >NUL
+ECHO.>.\temp\STOP
+TIMEOUT /T 1 /NOBREAK >NUL
+DEL /Q ".\temp\outagefreddy.cmd" >NUL 2>&1
+DEL /Q ".\temp\STOP" >NUL 2>&1
 CALL ".\audiomanager.cmd" STOP musicbox
-TIMEOUT /T 4 /NOBREAK >NUL
-SET JUMPSCARE=_bonnie
+TYPE ".\assets\office_outage.ans" > CON
+TIMEOUT /T 13 /NOBREAK >NUL
+SET JUMPSCARE=_freddy
 GOTO :GAMEOVER
 EXIT /B 0
 
@@ -513,7 +556,7 @@ DEL /Q ".\WIN" >NUL 2>&1
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
 TIMEOUT /T 4 /NOBREAK >NUL
 TYPE ".\assets\gameover.ans" > CON
-TIMEOUT /T 8 >NUL
+TIMEOUT /T 9 >NUL
 GOTO :LAUNCH
 
 :WIN
