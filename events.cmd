@@ -14,8 +14,8 @@ BREAK>MOVEMENTS.cmd
 
 :: AI difficulty
 SET MO_CHICA=0
-SET MO_BONNIE=20
-SET MO_FOXY=0
+SET MO_BONNIE=0
+SET MO_FOXY=3
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
@@ -32,12 +32,12 @@ IF EXIST cams_state (
 SET /A S_CALC=TIMER %% 4
 
 :: Increase MO based on the timer
-REM IF !TIMER! EQU 25 SET /A MO_BONNIE+=1 &:: 0.5 minutes in
-REM IF !TIMER! EQU 60 SET /A MO_CHICA+=1 &:: 1.0 minutes in
-REM IF !TIMER! EQU 150 SET /A MO_BONNIE+=1 &:: 2.5 minutes in
-REM IF !TIMER! EQU 300 SET /A MO_CHICA+=2 &:: 5 minutes in
-REM IF !TIMER! EQU 420 SET /A MO_CHICA+=1 &:: 7 minutes in
-REM IF !TIMER! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
+IF !TIMER! EQU 25 SET /A MO_BONNIE+=1 &:: 0.5 minutes in
+IF !TIMER! EQU 60 SET /A MO_CHICA+=1 &:: 1.0 minutes in
+IF !TIMER! EQU 150 SET /A MO_BONNIE+=1 &:: 2.5 minutes in
+IF !TIMER! EQU 300 SET /A MO_CHICA+=2 &:: 5 minutes in
+IF !TIMER! EQU 420 SET /A MO_CHICA+=1 &:: 7 minutes in
+IF !TIMER! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
 
 :: Movement Calculations
 IF !S_CALC! EQU 0 (
