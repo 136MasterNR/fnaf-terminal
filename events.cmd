@@ -7,9 +7,6 @@ SET FOXY=0
 SET TIMER_FOXY=1
 SET S_TIMER_FOXY=0
 
-ECHO.MO: %CHICA% CHICA
-ECHO.MO: %BONNIE% BONNIE
-
 BREAK>MOVEMENTS.cmd
 
 :: AI difficulty
@@ -19,6 +16,10 @@ SET MO_FOXY=3
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
+ECHO.DIFFICULTY: %MO_CHICA%/%MO_BONNIE%/%MO_FOXY%
+ECHO.MO: %CHICA% CHICA
+ECHO.MO: %BONNIE% BONNIE
+ECHO.MO: %FOXY% FOXY
 
 :TIMER
 TITLE FNaF Events - TIME: !TIMER!
@@ -36,6 +37,7 @@ IF !TIMER! EQU 25 SET /A MO_BONNIE+=1 &:: 0.5 minutes in
 IF !TIMER! EQU 60 SET /A MO_CHICA+=1 &:: 1.0 minutes in
 IF !TIMER! EQU 150 SET /A MO_BONNIE+=1 &:: 2.5 minutes in
 IF !TIMER! EQU 300 SET /A MO_CHICA+=2 &:: 5 minutes in
+IF !TIMER! EQU 300 SET /A MO_FOXY+=2 &:: 5 minutes in
 IF !TIMER! EQU 420 SET /A MO_CHICA+=1 &:: 7 minutes in
 IF !TIMER! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
 
@@ -70,9 +72,11 @@ IF !S_CALC! EQU 0 (
 		) ELSE IF !BONNIE! EQU 3 (
 			SET /A BONNIE=%RANDOM% %% 5 + 1
 			IF !BONNIE! EQU 3 SET /A BONNIE+=2
+			START /B "" CMD /C CALL ".\audiomanager.cmd" START deepsteps.mp3 sfx False 22 ^& EXIT >NUL 2>&1
 		) ELSE IF !BONNIE! EQU 4 (
 			SET /A BONNIE=%RANDOM% %% 5 + 1
 			IF !BONNIE! EQU 4 SET /A BONNIE+=1
+			START /B "" CMD /C CALL ".\audiomanager.cmd" START deepsteps.mp3 sfx False 22 ^& EXIT >NUL 2>&1
 		) ELSE (
 			SET /A BONNIE+=1
 		)
@@ -99,13 +103,14 @@ IF !F_CALC! EQU 0 IF !RND_FOXY! LEQ !MO_FOXY! IF !FOXY! LSS 3 (
 )
 
 IF EXIST SEEN_FOXY (
-	IF !S_TIMER_FOXY! EQU 4 (
-		SET S_TIMER_FOXY=7
+	IF !S_TIMER_FOXY! EQU 1 (
+		SET S_TIMER_FOXY=5
 		SET /A FOXY+=1
 		>refresh SET /P "=" <NUL
 		ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
-	) ELSE IF !S_TIMER_FOXY! EQU 5 (
+	) ELSE IF !S_TIMER_FOXY! EQU 3 (
 		(ECHO.!STATES! | findstr /C:"doorL") >NUL && (
+			START /B "" CMD /C CALL ".\audiomanager.cmd" START knock2.mp3 sfx False 95 ^& EXIT >NUL 2>&1
 			SET FOXY=0
 			SET S_TIMER_FOXY=0
 			DEL /Q ".\SEEN_FOXY"
@@ -116,14 +121,15 @@ IF EXIST SEEN_FOXY (
 		>refresh SET /P "=" <NUL
 		ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
 	) ELSE (
-		IF !S_TIMER_FOXY! LSS 5 (
+		IF !S_TIMER_FOXY! LSS 3 (
 			SET /A S_TIMER_FOXY+=1
 		)
-		IF !S_TIMER_FOXY! GTR 5 (
+		IF !S_TIMER_FOXY! GTR 3 (
 			SET /A S_TIMER_FOXY-=1
 		)
 	)
 )
+
 :: Send the new movements to the main game
 IF EXIST .\refresh (
 		ECHO SET CHICA=!CHICA!
