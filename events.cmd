@@ -8,13 +8,17 @@ SET TIMER_FOXY=1
 SET S_TIMER_FOXY=0
 
 SET BATTERY=10000
+SET SEND_BATTERY=99
+SET OLD_BATTERY=99
+
+SET TIME=12
 
 BREAK>MOVEMENTS.cmd
 
 :: AI difficulty
 SET MO_CHICA=0
 SET MO_BONNIE=0
-SET MO_FOXY=3
+SET MO_FOXY=2
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
@@ -138,7 +142,7 @@ IF EXIST .\refresh (
 		ECHO SET CHICA=!CHICA!
 		ECHO SET BONNIE=!BONNIE!
 		ECHO SET FOXY=!FOXY!
-) >MOVEMENTS.cmd
+)>.\MOVEMENTS.cmd
 
 
 :: Battery
@@ -153,10 +157,33 @@ IF EXIST cams_state SET /A DRAIN+=12
 SET /A BATTERY-=DRAIN
 SET /A SEND_BATTERY=BATTERY/100
 ECHO.Battery: !SEND_BATTERY! (Real: %BATTERY% - Drain: %DRAIN%)
-ECHO.!SEND_BATTERY!>BATTERY
-IF !BATTERY! LEQ 0 >refresh SET /P "=" <NUL
-SET /A BATT_CALC=!SEND_BATTERY! %% 5
-IF !BATT_CALC! EQU 0 >refresh SET /P "=" <NUL
+IF NOT !OLD_BATTERY! EQU !SEND_BATTERY! (
+	ECHO.!SEND_BATTERY!>BATTERY
+	>refresh SET /P "=" <NUL
+)
+SET OLD_BATTERY=!SEND_BATTERY!
+
+IF %TIMER% EQU 89 (
+	ECHO.1>TIME
+	ECHO.Time: 1
+	>refresh SET /P "=" <NUL
+) ELSE IF %TIMER% EQU 178 (
+	ECHO.2>TIME
+	ECHO.Time: 2
+	>refresh SET /P "=" <NUL
+) ELSE IF %TIMER% EQU 267 (
+	ECHO.3>TIME
+	ECHO.Time: 3
+	>refresh SET /P "=" <NUL
+) ELSE IF %TIMER% EQU 356 (
+	ECHO.4>TIME
+	ECHO.Time: 4
+	>refresh SET /P "=" <NUL
+) ELSE IF %TIMER% EQU 445 (
+	ECHO.5>TIME
+	ECHO.Time: 5
+	>refresh SET /P "=" <NUL
+)
 
 :: Send a "refesh animatronic movements" signal to the main game, if needed (forced)
 :FORCE_REFRESH
@@ -172,9 +199,9 @@ IF EXIST .\refresh (
 
 IF !BATTERY! LEQ 0 EXIT 0
 
-:: If survived 530 seconds, send a "win" signal to the main game (forced)
+:: If survived 534 seconds, send a "win" signal to the main game (forced)
 :FORCE_REFRESH_
-IF !TIMER! GEQ 530 (
+IF !TIMER! GEQ 534 (
 	IF NOT EXIST WIN BREAK>WIN
 	TASKKILL /IM xcopy.exe /F || GOTO :FORCE_REFRESH_
 	ENDLOCAL

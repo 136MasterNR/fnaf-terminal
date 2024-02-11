@@ -26,6 +26,7 @@ IF NOT %1.==READY. IF %1.==LAUNCH. (
 	DEL /Q ".\refresh"
 	DEL /Q ".\SEEN_FOXY"
 	DEL /Q ".\BATTERY"
+	DEL /Q ".\TIME"
 	EXIT 0
 ) ELSE (
 	(START /MIN "Launcher" conhost.exe -- "%~dpnx0" LAUNCH) && (ECHO. Launched [√]
@@ -90,6 +91,7 @@ SET CAMS_STATES=
 SET VIEW=OFFICE
 SET JUMPSCARE=_chica
 SET BATTERY=99
+SET TIME=12
 
 :: ANIMATRONICS
 SET BONNIE=0
@@ -164,10 +166,13 @@ IF %VIEW%==CAMS (
 REM TITLE [cams%CAMS_STATES%]
 
 :CHOICE
-:: Update battery
+:: Update battery and time
 IF EXIST BATTERY SET /P BATTERY=<BATTERY
-ECHO.[2;172HBattery: %BATTERY% 
+IF %VIEW%==OFFICE ( ECHO.[3;172H%RGB%26;22;45mPower:%RGB%25;21;44m %RGB%34;30;53m%BATTERY%%% ) ELSE ECHO.[4;171H%RGB%40;40;40mPower: %BATTERY%%% 
 IF %BATTERY% LEQ 0 GOTO :OUTAGE
+
+IF EXIST TIME SET /P TIME=<TIME
+IF %VIEW%==OFFICE ( ECHO.[2;178H%RGB%32;26;50m%TIME% AM ) ELSE ECHO.[3;177H%RGB%40;40;40m%TIME% AM 
 
 SET OLD_CHICA=%CHICA%
 SET OLD_BONNIE=%BONNIE%
@@ -199,6 +204,7 @@ IF %VIEW%==OFFICE (
 			GOTO :RE
 		) ELSE START /B "" CMD /C CALL ".\audiomanager.cmd" START error.mp3 sfx False 100 ^& EXIT >NUL 2>&1
 	)
+	IF /I %CHOICE.INPUT%==H START /B "" CMD /C CALL ".\audiomanager.cmd" START PartyFavorraspyPart_AC01__3.mp3 sfx False 95 ^& EXIT >NUL 2>&1
 )
 IF %VIEW%==CAMS (
 	IF /I %CHOICE.INPUT%==1 IF NOT %CAMS_STATE%==_1 (
@@ -297,8 +303,6 @@ IF /I %CHOICE.INPUT%== (
 	GOTO :GAMEOVER
 )
 IF /I %CHOICE.INPUT%== GOTO :WIN
-
-IF /I %CHOICE.INPUT%==H START /B "" CMD /C CALL ".\audiomanager.cmd" START PartyFavorraspyPart_AC01__3.mp3 sfx False 95 ^& EXIT >NUL 2>&1
 
 IF /I %CHOICE.INPUT%== EXIT /B 0
 
@@ -465,6 +469,10 @@ EXIT /B 0
 
 
 :OUTAGE
+IF NOT %VIEW%==OFFICE (
+	START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_down.mp3 camera_down False 100 ^& EXIT >NUL
+	START /B "" CMD /C CALL ".\audiomanager.cmd" STOP camera_up ^& EXIT >NUL
+)
 TYPE ".\assets\office_outage.ans" > CON
 START /B "" CMD /C CALL ".\audiomanager.cmd" START powerdown.mp3 powerdown False 95 ^& EXIT >NUL 2>&1
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
@@ -498,10 +506,13 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
+DEL /Q .\refresh >NUL 2>&1
+DEL /Q ".\BATTERY" >NUL 2>&1
+DEL /Q ".\TIME" >NUL 2>&1
+DEL /Q ".\WIN" >NUL 2>&1
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
 TIMEOUT /T 4 /NOBREAK >NUL
 TYPE ".\assets\gameover.ans" > CON
-DEL /Q .\refresh >NUL 2>&1
 TIMEOUT /T 8 >NUL
 GOTO :LAUNCH
 
@@ -511,6 +522,10 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
+DEL /Q .\refresh >NUL 2>&1
+DEL /Q ".\BATTERY" >NUL 2>&1
+DEL /Q ".\TIME" >NUL 2>&1
+DEL /Q ".\WIN" >NUL 2>&1
 CALL ".\audiomanager.cmd" START chimes2.mp3 sfx False 100
 TYPE ".\assets\5am.ans" > CON
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
