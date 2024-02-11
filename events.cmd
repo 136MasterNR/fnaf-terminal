@@ -142,8 +142,6 @@ IF EXIST .\refresh (
 
 
 :: Battery
-SET /A B_CALC=TIMER %% 5
-
 SET DRAIN=4
 (ECHO.!STATES! | findstr /C:"_doorL") >NUL && SET /A DRAIN+=12
 (ECHO.!STATES! | findstr /C:"_doorR") >NUL && SET /A DRAIN+=12
@@ -157,6 +155,8 @@ SET /A SEND_BATTERY=BATTERY/100
 ECHO.Battery: !SEND_BATTERY! (Real: %BATTERY% - Drain: %DRAIN%)
 ECHO.!SEND_BATTERY!>BATTERY
 IF !BATTERY! LEQ 0 >refresh SET /P "=" <NUL
+SET /A BATT_CALC=!SEND_BATTERY! %% 5
+IF !BATT_CALC! EQU 0 >refresh SET /P "=" <NUL
 
 :: Send a "refesh animatronic movements" signal to the main game, if needed (forced)
 :FORCE_REFRESH
