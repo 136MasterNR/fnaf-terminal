@@ -14,8 +14,8 @@ BREAK>MOVEMENTS.cmd
 
 :: AI difficulty
 SET MO_CHICA=0
-SET MO_BONNIE=0
-SET MO_FOXY=4
+SET MO_BONNIE=20
+SET MO_FOXY=0
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
@@ -23,21 +23,21 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 :TIMER
 TITLE FNaF Events - TIME: !TIMER!
 
-SET /A S_CALC=TIMER %% 5
-
 SET STATES=
 SET /P STATES=<office_states
 IF EXIST cams_state (
 	SET /P CAMS_STATES=<cams_state
 ) ELSE SET CAMS_STATES=_
 
+SET /A S_CALC=TIMER %% 4
+
 :: Increase MO based on the timer
-IF !TIMER! EQU 25 SET /A MO_BONNIE+=1 &:: 0.5 minutes in
-IF !TIMER! EQU 60 SET /A MO_CHICA+=1 &:: 1.0 minutes in
-IF !TIMER! EQU 150 SET /A MO_BONNIE+=1 &:: 2.5 minutes in
-IF !TIMER! EQU 300 SET /A MO_CHICA+=2 &:: 5 minutes in
-IF !TIMER! EQU 420 SET /A MO_CHICA+=1 &:: 7 minutes in
-IF !TIMER! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
+REM IF !TIMER! EQU 25 SET /A MO_BONNIE+=1 &:: 0.5 minutes in
+REM IF !TIMER! EQU 60 SET /A MO_CHICA+=1 &:: 1.0 minutes in
+REM IF !TIMER! EQU 150 SET /A MO_BONNIE+=1 &:: 2.5 minutes in
+REM IF !TIMER! EQU 300 SET /A MO_CHICA+=2 &:: 5 minutes in
+REM IF !TIMER! EQU 420 SET /A MO_CHICA+=1 &:: 7 minutes in
+REM IF !TIMER! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
 
 :: Movement Calculations
 IF !S_CALC! EQU 0 (
@@ -61,18 +61,22 @@ IF !S_CALC! EQU 0 (
 	)
 	SET /A "RND_BONNIE=%RANDOM% %% 19 + 1"
 	IF !RND_BONNIE! LEQ !MO_BONNIE! (
-		IF !BONNIE! EQU 0 (
-			SET /A BONNIE+=1
+		IF !BONNIE! EQU 1 (
+			SET /A BONNIE=%RANDOM% %% 4 + 1
+			IF !BONNIE! EQU 1 SET /A BONNIE+=2
+		) ELSE IF !BONNIE! EQU 2 (
+			SET /A BONNIE=%RANDOM% %% 4 + 1
+			IF !BONNIE! EQU 2 SET /A BONNIE+=2
 		) ELSE IF !BONNIE! EQU 3 (
-			SET /A BONNIE=%RANDOM% %% 3 + 2
+			SET /A BONNIE=%RANDOM% %% 5 + 1
+			IF !BONNIE! EQU 3 SET /A BONNIE+=2
 		) ELSE IF !BONNIE! EQU 4 (
-			(ECHO.!STATES! | findstr /C:"doorL") >NUL && SET /A BONNIE=%RANDOM% %% 2 + 3 || SET /A BONNIE+=1
-		) ELSE IF !BONNIE! EQU 5 (
-			SET /A BONNIE+=1
+			SET /A BONNIE=%RANDOM% %% 5 + 1
+			IF !BONNIE! EQU 4 SET /A BONNIE+=1
 		) ELSE (
 			SET /A BONNIE+=1
 		)
-		IF !BONNIE! GEQ 5 (ECHO.!STATES! | findstr /C:"doorL") >NUL && SET /A BONNIE=%RANDOM% %% 3 + 1
+		IF !BONNIE! GTR 6 (ECHO.!STATES! | findstr /C:"doorL") >NUL && SET /A BONNIE=%RANDOM% %% 3 + 1
 		ECHO.MO: !BONNIE! BONNIE
 		>refresh SET /P "=" <NUL
 	)
