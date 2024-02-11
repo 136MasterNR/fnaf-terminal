@@ -96,10 +96,10 @@ SET TIME=12
 :: ANIMATRONICS
 SET BONNIE=0
 SET OLD_BONNIE=%BONNIE%
-SET WS_BONNIE=%BONNIE%
+SET WS_BONNIE=0
 SET CHICA=0
 SET OLD_CHICA=%CHICA%
-SET WS_CHICA=%CHICA%
+SET WS_CHICA=0
 SET FREDDY=0
 SET FOXY=0
 SET OLD_FOXY=%FOXY%
@@ -115,6 +115,15 @@ IF %L_LIGHTS% EQU 1 IF %BONNIE% GEQ 6 (SET STATES=%STATES%_bonnie) ELSE SET STAT
 IF %GOLDENFREDDY% GEQ 1 SET STATES=%STATES%_goldenfreddy
 
 IF %VIEW%==OFFICE (
+	>office_states SET /P "=%STATES%" <NUL
+	IF %BONNIE% EQU 6 (ECHO.%STATES% | findstr /C:"bonnie") >NUL && IF %WS_BONNIE% EQU 1 (
+		START /B "" CMD /C CALL ".\audiomanager.cmd" START windowscare.mp3 sfx False 75 ^& EXIT >NUL 2>&1
+		SET WS_BONNIE=0
+	)
+	IF %CHICA% EQU 5 (ECHO.%STATES% | findstr /C:"chica") >NUL && IF %WS_CHICA% EQU 1 (
+		START /B "" CMD /C CALL ".\audiomanager.cmd" START windowscare.mp3 sfx False 75 ^& EXIT >NUL 2>&1
+		SET WS_BONNIE=0
+	)
 	TYPE ".\assets\office%STATES%%REVERSE%.ans" > CON
 	ECHO.[51;77H%RGB%0;0;0mPress SPACE to open the cams
 	ECHO.[27;6H[0m%RGB%94;4;9mQ[0m
@@ -124,7 +133,6 @@ IF %VIEW%==OFFICE (
 	IF %TAB% EQU 0 ECHO.[3;6H%RGB%22;19;40mPr%RGB%28;25;46mes%RGB%24;20;43ms TAB to mut%RGB%15;12;29me vo%RGB%9;7;21mice %RGB%0;0;0mcall
 	REM TITLE [office%STATES%%REVERSE%]
 	IF DEFINED REVERSE SET REVERSE=
-	>office_states SET /P "=%STATES%" <NUL
 )
 
 
@@ -145,6 +153,7 @@ IF %CAMS_STATE%==_9 IF %BONNIE% EQU 5 SET CAMS_STATES=%CAMS_STATES%_bonnie
 IF %CAMS_STATE%==_11 IF %CHICA% EQU 4 SET CAMS_STATES=%CAMS_STATES%_chica
 
 IF %VIEW%==CAMS (
+	>cams_state SET /P "=%CAMS_STATE%" <NUL
 	TYPE ".\assets\cams%CAMS_STATES%.ans" > CON
 	ECHO.[49;67H%RGB%53;55;62m[1mPress SPACE to close the cams[0m
 	IF NOT %CAMS_STATE%==_1 ECHO.[26;143H%RGB%67;67;67m[1m1[0m
@@ -159,7 +168,6 @@ IF %VIEW%==CAMS (
 	IF NOT %CAMS_STATE%==_10 ECHO.[44;158H%RGB%67;67;67m[1m10[0m
 	IF NOT %CAMS_STATE%==_11 ECHO.[47;158H%RGB%67;67;67m[1m11[0m
 	IF %TAB% EQU 0 ECHO.[3;6HPress TAB to mute voice call
-	>cams_state SET /P "=%CAMS_STATE%" <NUL
 	IF %CAMS_STATES%==_8_foxy (
 		BREAK>SEEN_FOXY
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START running_fast3.mp3 sfx False 100 ^& EXIT >NUL 2>&1
@@ -317,7 +325,21 @@ IF %CHOICE.INPUT%==TIMEOUT (
 	)
 
 	CALL .\MOVEMENTS.cmd
+	
 	SETLOCAL ENABLEDELAYEDEXPANSION
+	
+	:: Window Scares
+	IF NOT %OLD_BONNIE% EQU !BONNIE! IF !BONNIE! EQU 6 (
+		ENDLOCAL
+		SET WS_BONNIE=1
+		SETLOCAL ENABLEDELAYEDEXPANSION
+	)
+	IF NOT %OLD_BONNIE% EQU !CHICA! IF !CHICA! EQU 6 (
+		ENDLOCAL
+		SET WS_CHICA=1
+		SETLOCAL ENABLEDELAYEDEXPANSION
+	)
+
 
 	:: Death detections
 	IF !CHICA! GTR 5 (ECHO.%STATES% | findstr /C:"doorR") >NUL || (
@@ -412,7 +434,7 @@ IF %CHOICE.INPUT%==TIMEOUT (
 			)
 		)
 	)
-
+	
 	ENDLOCAL
 )
 
@@ -511,6 +533,7 @@ CALL ".\audiomanager.cmd" START musicbox.mp3 musicbox False 90
 	ECHO HELP^>NUL
 	ECHO HELP^>NUL
 	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
+	ECHO IF EXIST STOP EXIT
 	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
 	ECHO HELP^>NUL
 	ECHO HELP^>NUL
