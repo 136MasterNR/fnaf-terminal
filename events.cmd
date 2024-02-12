@@ -6,6 +6,7 @@ SET BONNIE=0
 SET FOXY=0
 SET TIMER_FOXY=1
 SET S_TIMER_FOXY=0
+SET A_TIMER_FOXY=31
 
 SET BATTERY=10000
 SET SEND_BATTERY=99
@@ -16,25 +17,44 @@ SET TIME=12
 BREAK>MOVEMENTS.cmd
 
 :: AI difficulty
+SET MO_FREDDY=-
 SET MO_CHICA=20
 SET MO_BONNIE=20
-SET MO_FOXY=2
+SET MO_FOXY=0
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-ECHO.DIFFICULTY: %MO_CHICA%/%MO_BONNIE%/%MO_FOXY%
+ECHO.DIFFICULTY: %MO_FREDDY%/%MO_CHICA%/%MO_BONNIE%/%MO_FOXY%
+ECHO.MO: "%FREDDY%" FREDDY
 ECHO.MO: %CHICA% CHICA
 ECHO.MO: %BONNIE% BONNIE
 ECHO.MO: %FOXY% FOXY
 
 :TIMER
-TITLE FNaF Events - TIME: !TIMER!
-
 SET STATES=
 SET /P STATES=<office_states
 IF EXIST cams_state (
 	SET /P CAMS_STATES=<cams_state
 ) ELSE SET CAMS_STATES=_
+
+:: Battery
+SET DRAIN=4
+(ECHO.!STATES! | findstr /C:"_doorL") >NUL && SET /A DRAIN+=13
+(ECHO.!STATES! | findstr /C:"_doorR") >NUL && SET /A DRAIN+=13
+(ECHO.!STATES! | findstr /C:"_lightL") >NUL && SET /A DRAIN+=13
+(ECHO.!STATES! | findstr /C:"_lightR") >NUL && SET /A DRAIN+=13
+(ECHO.!STATES! | findstr /C:"_bonnie") >NUL && SET /A DRAIN+=13
+(ECHO.!STATES! | findstr /C:"_chica") >NUL && SET /A DRAIN+=13
+IF EXIST cams_state SET /A DRAIN+=13
+SET /A BATTERY-=DRAIN
+SET /A SEND_BATTERY=BATTERY/100
+IF NOT !OLD_BATTERY! EQU !SEND_BATTERY! (
+	ECHO.!SEND_BATTERY!>BATTERY
+	>refresh SET /P "=" <NUL
+)
+SET OLD_BATTERY=!SEND_BATTERY!
+
+TITLE FNaF Events - Time: !TIMER! Power: !SEND_BATTERY! ^(Real: %BATTERY% - Drain: %DRAIN%^)
 
 SET /A S_CALC=TIMER %% 4
 
@@ -63,7 +83,7 @@ IF !S_CALC! EQU 0 (
 				SET /A CHICA-=1
 			)
 		)
-		IF !CHICA! GEQ 5 (ECHO.!STATES! | findstr /C:"doorR") >NUL && SET CHICA=1
+		IF !CHICA! GTR 5 (ECHO.!STATES! | findstr /C:"doorR") >NUL && SET CHICA=1
 		ECHO.MO: !CHICA! CHICA
 		>refresh SET /P "=" <NUL
 	)
@@ -72,9 +92,11 @@ IF !S_CALC! EQU 0 (
 		IF !BONNIE! EQU 1 (
 			SET /A BONNIE=%RANDOM% %% 4 + 1
 			IF !BONNIE! EQU 1 SET /A BONNIE+=2
+			START /B "" CMD /C CALL ".\audiomanager.cmd" START deepsteps.mp3 sfx False 22 ^& EXIT >NUL 2>&1
 		) ELSE IF !BONNIE! EQU 2 (
 			SET /A BONNIE=%RANDOM% %% 4 + 1
 			IF !BONNIE! EQU 2 SET /A BONNIE+=2
+			START /B "" CMD /C CALL ".\audiomanager.cmd" START deepsteps.mp3 sfx False 22 ^& EXIT >NUL 2>&1
 		) ELSE IF !BONNIE! EQU 3 (
 			SET /A BONNIE=%RANDOM% %% 5 + 1
 			IF !BONNIE! EQU 3 SET /A BONNIE+=2
@@ -92,11 +114,23 @@ IF !S_CALC! EQU 0 (
 	)
 )
 
-IF !CAMS_STATES!==_5 SET TIMER_FOXY=0
-SET /A F_CALC=TIMER_FOXY %% 5
-SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
+
+IF !FOXY! GEQ 5 (ECHO.!STATES! | findstr /C:"doorL") >NUL && (
+	START /B "" CMD /C CALL ".\audiomanager.cmd" START knock2.mp3 sfx False 95 ^& EXIT >NUL 2>&1
+	SET FOXY=0
+	SET S_TIMER_FOXY=31
+	DEL /Q ".\SEEN_FOXY"
+	>refresh SET /P "=" <NUL
+) || (
+	SET /A FOXY+=1
+	>refresh SET /P "=" <NUL
+)
 
 :: Specifically for Foxy
+IF !CAMS_STATES!==_5 SET TIMER_FOXY=0
+SET /A F_CALC=TIMER_FOXY %% 6
+SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
+
 IF !F_CALC! EQU 0 IF !RND_FOXY! LEQ !MO_FOXY! IF !FOXY! LSS 3 (
 	SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
 	IF !RND_FOXY! LEQ !MO_FOXY! (
@@ -109,6 +143,7 @@ IF !F_CALC! EQU 0 IF !RND_FOXY! LEQ !MO_FOXY! IF !FOXY! LSS 3 (
 )
 
 IF EXIST SEEN_FOXY (
+	IF !A_TIMER_FOXY! NEQ 31 SET A_TIMER_FOXY=31
 	IF !S_TIMER_FOXY! EQU 1 (
 		SET S_TIMER_FOXY=5
 		SET /A FOXY+=1
@@ -134,6 +169,29 @@ IF EXIST SEEN_FOXY (
 			SET /A S_TIMER_FOXY-=1
 		)
 	)
+) ELSE IF !FOXY! GEQ 3 (
+	IF !A_TIMER_FOXY! EQU 10 (
+		IF !FOXY! EQU 4 (
+			(ECHO.!STATES! | findstr /C:"doorL") >NUL && (
+				START /B "" CMD /C CALL ".\audiomanager.cmd" START knock2.mp3 sfx False 95 ^& EXIT >NUL 2>&1
+				SET FOXY=0
+				SET A_TIMER_FOXY=0
+				DEL /Q ".\SEEN_FOXY"
+			) || (
+				SET /A FOXY+=1
+				DEL /Q ".\SEEN_FOXY"
+			)
+			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
+			>refresh SET /P "=" <NUL
+		) ELSE IF !FOXY! EQU 3 (
+			START /B "" CMD /C CALL ".\audiomanager.cmd" START running_fast3.mp3 sfx False 100 ^& EXIT >NUL 2>&1
+			SET /A FOXY+=1
+			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
+			>refresh SET /P "=" <NUL
+		)
+	) ELSE IF !A_TIMER_FOXY! GTR 10 (
+		SET A_TIMER_FOXY=0
+	) ELSE SET /A A_TIMER_FOXY+=1
 )
 
 
@@ -144,49 +202,31 @@ IF EXIST .\refresh (
 		ECHO SET FOXY=!FOXY!
 )>.\MOVEMENTS.cmd
 
-
-:: Battery
-SET DRAIN=4
-(ECHO.!STATES! | findstr /C:"_doorL") >NUL && SET /A DRAIN+=12
-(ECHO.!STATES! | findstr /C:"_doorR") >NUL && SET /A DRAIN+=12
-(ECHO.!STATES! | findstr /C:"_lightL") >NUL && SET /A DRAIN+=12
-(ECHO.!STATES! | findstr /C:"_lightR") >NUL && SET /A DRAIN+=12
-(ECHO.!STATES! | findstr /C:"_bonnie") >NUL && SET /A DRAIN+=12
-(ECHO.!STATES! | findstr /C:"_chica") >NUL && SET /A DRAIN+=12
-IF EXIST cams_state SET /A DRAIN+=12
-SET /A BATTERY-=DRAIN
-SET /A SEND_BATTERY=BATTERY/100
-ECHO.Battery: !SEND_BATTERY! (Real: %BATTERY% - Drain: %DRAIN%)
-IF NOT !OLD_BATTERY! EQU !SEND_BATTERY! (
-	ECHO.!SEND_BATTERY!>BATTERY
-	>refresh SET /P "=" <NUL
-)
-SET OLD_BATTERY=!SEND_BATTERY!
-
 IF %TIMER% EQU 89 (
 	ECHO.1>TIME
-	ECHO.Time: 1
+	ECHO.Time: 1 AM
 	>refresh SET /P "=" <NUL
 ) ELSE IF %TIMER% EQU 178 (
 	ECHO.2>TIME
-	ECHO.Time: 2
+	ECHO.Time: 2 AM
 	>refresh SET /P "=" <NUL
 ) ELSE IF %TIMER% EQU 267 (
 	ECHO.3>TIME
-	ECHO.Time: 3
+	ECHO.Time: 3 AM
 	>refresh SET /P "=" <NUL
 ) ELSE IF %TIMER% EQU 356 (
 	ECHO.4>TIME
-	ECHO.Time: 4
+	ECHO.Time: 4 AM
 	>refresh SET /P "=" <NUL
 ) ELSE IF %TIMER% EQU 445 (
 	ECHO.5>TIME
-	ECHO.Time: 5
+	ECHO.Time: 5 AM
 	>refresh SET /P "=" <NUL
 )
 
 :: Send a "refesh animatronic movements" signal to the main game, if needed (forced)
 :FORCE_REFRESH
+IF !BATTERY! LEQ 0 EXIT
 IF EXIST .\refresh (
 	TASKKILL /IM xcopy.exe /F >NUL 2>&1 && (
 		DEL /Q .\refresh
@@ -197,10 +237,9 @@ IF EXIST .\refresh (
 	)
 )
 
-IF !BATTERY! LEQ 0 EXIT 0
-
 :: If survived 534 seconds, send a "win" signal to the main game (forced)
 :FORCE_REFRESH_
+IF !BATTERY! LEQ 0 EXIT
 IF !TIMER! GEQ 534 (
 	IF NOT EXIST WIN BREAK>WIN
 	TASKKILL /IM xcopy.exe /F || GOTO :FORCE_REFRESH_

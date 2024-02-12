@@ -122,7 +122,7 @@ IF %VIEW%==OFFICE (
 	)
 	IF %CHICA% EQU 5 (ECHO.%STATES% | findstr /C:"chica") >NUL && IF %WS_CHICA% EQU 1 (
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START windowscare.mp3 sfx False 75 ^& EXIT >NUL 2>&1
-		SET WS_BONNIE=0
+		SET WS_CHICA=0
 	)
 	TYPE ".\assets\office%STATES%%REVERSE%.ans" > CON
 	ECHO.[51;77H%RGB%0;0;0mPress SPACE to open the cams
@@ -334,7 +334,7 @@ IF %CHOICE.INPUT%==TIMEOUT (
 		SET WS_BONNIE=1
 		SETLOCAL ENABLEDELAYEDEXPANSION
 	)
-	IF NOT %OLD_BONNIE% EQU !CHICA! IF !CHICA! EQU 6 (
+	IF NOT %OLD_CHICA% EQU !CHICA! IF !CHICA! EQU 5 (
 		ENDLOCAL
 		SET WS_CHICA=1
 		SETLOCAL ENABLEDELAYEDEXPANSION
@@ -517,13 +517,13 @@ CALL ".\audiomanager.cmd" START musicbox.mp3 musicbox False 90
 	ECHO HELP^>NUL
 	ECHO HELP^>NUL
 	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
-	ECHO IF EXIST STOP EXIT
+	ECHO IF EXIST .\temp\STOP EXIT
 	ECHO TIMEOUT /T 0 /NOBREAK ^>NUL
 	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
 	ECHO HELP^>NUL
 	ECHO HELP^>NUL
 	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
-	ECHO IF EXIST STOP EXIT
+	ECHO IF EXIST .\temp\STOP EXIT
 	ECHO TIMEOUT /T 0 /NOBREAK ^>NUL
 	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
 	ECHO HELP^>NUL
@@ -533,18 +533,18 @@ CALL ".\audiomanager.cmd" START musicbox.mp3 musicbox False 90
 	ECHO HELP^>NUL
 	ECHO HELP^>NUL
 	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
-	ECHO IF EXIST STOP EXIT
+	ECHO IF EXIST .\temp\STOP EXIT
 	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
 	ECHO HELP^>NUL
 	ECHO HELP^>NUL
 	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
-	ECHO IF EXIST STOP EXIT
+	ECHO IF EXIST .\temp\STOP EXIT
 	ECHO TIMEOUT /T 0 /NOBREAK ^>NUL
 	ECHO TYPE ".\assets\office_outage_freddy.ans" ^> CON
 	ECHO HELP^>NUL
 	ECHO HELP^>NUL
 	ECHO TYPE ".\assets\office_outage_half.ans" ^> CON
-	ECHO IF EXIST STOP EXIT
+	ECHO IF EXIST .\temp\STOP EXIT
 	ECHO TIMEOUT /T 0 /NOBREAK ^>NUL
 	ECHO GOTO :L
 )>".\temp\outagefreddy.cmd"
