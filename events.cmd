@@ -258,6 +258,13 @@ IF !TIMER! GEQ 534 (
 	EXIT 0
 )
 
+:: Random Sounds
+SET /A RND_SFX=%RANDOM% %% 350 +1
+IF !RND_SFX! EQU 1 START /B "" CMD /C CALL ".\audiomanager.cmd" START circus.mp3 sfx False 14 ^& EXIT >NUL 2>&1
+SET /A RND_SFX=%RANDOM% %% 175 +1
+IF !RND_SFX! EQU 1 START /B "" CMD /C CALL ".\audiomanager.cmd" START pirate_song2.mp3 sfx False 18 ^& EXIT >NUL 2>&1
+
+
 :: Timers
 SET /A TIMER+=1
 SET /A TIMER_FOXY+=1

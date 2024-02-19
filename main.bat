@@ -503,7 +503,11 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
-TIMEOUT /T 14 /NOBREAK >NUL
+TIMEOUT /T 7 /NOBREAK >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" START deepsteps.mp3 sfx False 22 ^& EXIT >NUL 2>&1
+TIMEOUT /T 7 /NOBREAK >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" START deepsteps.mp3 sfx False 22 ^& EXIT >NUL 2>&1
+TIMEOUT /T 6 /NOBREAK >NUL
 CALL ".\audiomanager.cmd" START musicbox.mp3 musicbox False 90
 
 (
@@ -556,7 +560,7 @@ DEL /Q ".\temp\outagefreddy.cmd" >NUL 2>&1
 DEL /Q ".\temp\STOP" >NUL 2>&1
 CALL ".\audiomanager.cmd" STOP musicbox
 TYPE ".\assets\office_outage.ans" > CON
-TIMEOUT /T 13 /NOBREAK >NUL
+TIMEOUT /T 12 /NOBREAK >NUL
 SET JUMPSCARE=_freddy
 GOTO :GAMEOVER
 EXIT /B 0
