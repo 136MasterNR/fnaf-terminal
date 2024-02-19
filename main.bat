@@ -170,7 +170,7 @@ IF %VIEW%==CAMS (
 	IF %TAB% EQU 0 ECHO.[3;6HPress TAB to mute voice call
 	IF %CAMS_STATES%==_8_foxy (
 		BREAK>SEEN_FOXY
-		START /B "" CMD /C CALL ".\audiomanager.cmd" START running_fast3.mp3 sfx False 100 ^& EXIT >NUL 2>&1
+		START /B "" CMD /C CALL ".\audiomanager.cmd" START run.mp3 sfx False 100 ^& EXIT >NUL 2>&1
 	)
 )
 REM TITLE [cams%CAMS_STATES%]

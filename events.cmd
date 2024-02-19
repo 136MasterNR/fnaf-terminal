@@ -114,6 +114,8 @@ IF !S_CALC! EQU 0 (
 	)
 )
 
+:: Specifically for Foxy
+REM TITLE FOXY=%FOXY% S_TIMER_FOXY=%S_TIMER_FOXY% A_TIMER_FOXY=%A_TIMER_FOXY%
 
 IF !FOXY! GEQ 5 (ECHO.!STATES! | findstr /C:"doorL") >NUL && (
 	START /B "" CMD /C CALL ".\audiomanager.cmd" START knock2.mp3 sfx False 95 ^& EXIT >NUL 2>&1
@@ -126,7 +128,6 @@ IF !FOXY! GEQ 5 (ECHO.!STATES! | findstr /C:"doorL") >NUL && (
 	>refresh SET /P "=" <NUL
 )
 
-:: Specifically for Foxy
 IF !CAMS_STATES!==_5 SET TIMER_FOXY=0
 SET /A F_CALC=TIMER_FOXY %% 6
 SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
@@ -143,32 +144,34 @@ IF !F_CALC! EQU 0 IF !RND_FOXY! LEQ !MO_FOXY! IF !FOXY! LSS 3 (
 )
 
 IF EXIST SEEN_FOXY (
-	IF !A_TIMER_FOXY! NEQ 31 SET A_TIMER_FOXY=31
-	IF !S_TIMER_FOXY! EQU 1 (
-		SET S_TIMER_FOXY=5
-		SET /A FOXY+=1
-		>refresh SET /P "=" <NUL
-		ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
-	) ELSE IF !S_TIMER_FOXY! EQU 3 (
-		(ECHO.!STATES! | findstr /C:"doorL") >NUL && (
-			START /B "" CMD /C CALL ".\audiomanager.cmd" START knock2.mp3 sfx False 95 ^& EXIT >NUL 2>&1
-			SET FOXY=0
-			SET S_TIMER_FOXY=0
-			DEL /Q ".\SEEN_FOXY"
-		) || (
+	IF !FOXY! GEQ 3 (
+		IF !A_TIMER_FOXY! NEQ 31 SET A_TIMER_FOXY=31
+		IF !S_TIMER_FOXY! EQU 1 (
+			SET S_TIMER_FOXY=5
 			SET /A FOXY+=1
-			DEL /Q ".\SEEN_FOXY"
+			>refresh SET /P "=" <NUL
+			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
+		) ELSE IF !S_TIMER_FOXY! EQU 3 (
+			(ECHO.!STATES! | findstr /C:"doorL") >NUL && (
+				START /B "" CMD /C CALL ".\audiomanager.cmd" START knock2.mp3 sfx False 95 ^& EXIT >NUL 2>&1
+				SET FOXY=0
+				SET S_TIMER_FOXY=0
+				DEL /Q ".\SEEN_FOXY"
+			) || (
+				SET /A FOXY+=1
+				DEL /Q ".\SEEN_FOXY"
+			)
+			>refresh SET /P "=" <NUL
+			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
+		) ELSE (
+			IF !S_TIMER_FOXY! LSS 3 (
+				SET /A S_TIMER_FOXY+=1
+			)
+			IF !S_TIMER_FOXY! GTR 3 (
+				SET /A S_TIMER_FOXY-=1
+			)
 		)
-		>refresh SET /P "=" <NUL
-		ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
-	) ELSE (
-		IF !S_TIMER_FOXY! LSS 3 (
-			SET /A S_TIMER_FOXY+=1
-		)
-		IF !S_TIMER_FOXY! GTR 3 (
-			SET /A S_TIMER_FOXY-=1
-		)
-	)
+	) ELSE DEL /Q ".\SEEN_FOXY"
 ) ELSE IF !FOXY! GEQ 3 (
 	IF !A_TIMER_FOXY! EQU 29 (
 		IF !FOXY! EQU 4 (
@@ -184,7 +187,7 @@ IF EXIST SEEN_FOXY (
 			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
 			>refresh SET /P "=" <NUL
 		) ELSE IF !FOXY! EQU 3 (
-			START /B "" CMD /C CALL ".\audiomanager.cmd" START running_fast3.mp3 sfx False 100 ^& EXIT >NUL 2>&1
+			START /B "" CMD /C CALL ".\audiomanager.cmd" START run.mp3 sfx False 100 ^& EXIT >NUL 2>&1
 			SET /A FOXY+=1
 			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
 			>refresh SET /P "=" <NUL
@@ -224,9 +227,17 @@ IF %TIMER% EQU 89 (
 	>refresh SET /P "=" <NUL
 )
 
-:: Send a "refesh animatronic movements" signal to the main game, if needed (forced)
+:: Send a "refesh animatronic movements" signal to the main game, only if needed (forced)
 :FORCE_REFRESH
-IF !BATTERY! LEQ 0 EXIT
+IF !SEND_BATTERY! LEQ 0 (
+	TASKKILL /IM xcopy.exe /F >NUL 2>&1 && (
+		ECHO. [Q] Events safely stopped.
+		EXIT
+	) || (
+		ECHO.[-] Attempting to update the main process...
+		GOTO :FORCE_REFRESH
+	)
+)
 IF EXIST .\refresh (
 	TASKKILL /IM xcopy.exe /F >NUL 2>&1 && (
 		DEL /Q .\refresh
@@ -239,7 +250,7 @@ IF EXIST .\refresh (
 
 :: If survived 534 seconds, send a "win" signal to the main game (forced)
 :FORCE_REFRESH_
-IF !BATTERY! LEQ 0 EXIT
+IF !BATTERY! LEQ -1 EXIT
 IF !TIMER! GEQ 534 (
 	IF NOT EXIST WIN BREAK>WIN
 	TASKKILL /IM xcopy.exe /F || GOTO :FORCE_REFRESH_
