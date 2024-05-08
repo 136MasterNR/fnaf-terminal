@@ -25,7 +25,7 @@ SET MO_FOXY=2
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 ECHO.DIFFICULTY: %MO_FREDDY%/%MO_CHICA%/%MO_BONNIE%/%MO_FOXY%
-ECHO.MO: "%FREDDY%" FREDDY
+ECHO.MO: %FREDDY% FREDDY
 ECHO.MO: %CHICA% CHICA
 ECHO.MO: %BONNIE% BONNIE
 ECHO.MO: %FOXY% FOXY
@@ -115,7 +115,7 @@ IF !S_CALC! EQU 0 (
 )
 
 :: Specifically for Foxy
-REM TITLE FOXY=%FOXY% S_TIMER_FOXY=%S_TIMER_FOXY% A_TIMER_FOXY=%A_TIMER_FOXY%
+TITLE FOXY=%FOXY% S_TIMER_FOXY=%S_TIMER_FOXY% A_TIMER_FOXY=%A_TIMER_FOXY%
 
 IF !FOXY! GEQ 5 (ECHO.!STATES! | findstr /C:"doorL") >NUL && (
 	START /B "" CMD /C CALL ".\audiomanager.cmd" START knock2.mp3 sfx False 95 ^& EXIT >NUL 2>&1
@@ -146,16 +146,20 @@ IF !F_CALC! EQU 0 IF !RND_FOXY! LEQ !MO_FOXY! IF !FOXY! LSS 3 (
 IF EXIST SEEN_FOXY (
 	IF !FOXY! GEQ 3 (
 		IF !A_TIMER_FOXY! NEQ 31 SET A_TIMER_FOXY=31
+		IF !S_TIMER_FOXY! EQU 0 (
+			START /B "" CMD /C CALL ".\audiomanager.cmd" START run.mp3 sfx False 100 ^& EXIT >NUL 2>&1
+		)
 		IF !S_TIMER_FOXY! EQU 1 (
 			SET S_TIMER_FOXY=5
 			SET /A FOXY+=1
 			>refresh SET /P "=" <NUL
 			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
-		) ELSE IF !S_TIMER_FOXY! EQU 3 (
+		) ELSE IF !S_TIMER_FOXY! EQU 5 (
 			(ECHO.!STATES! | findstr /C:"doorL") >NUL && (
 				START /B "" CMD /C CALL ".\audiomanager.cmd" START knock2.mp3 sfx False 95 ^& EXIT >NUL 2>&1
 				SET FOXY=0
 				SET S_TIMER_FOXY=0
+				SET /A BATTERY-=100
 				DEL /Q ".\SEEN_FOXY"
 			) || (
 				SET /A FOXY+=1
@@ -174,6 +178,15 @@ IF EXIST SEEN_FOXY (
 	) ELSE DEL /Q ".\SEEN_FOXY"
 ) ELSE IF !FOXY! GEQ 3 (
 	IF !A_TIMER_FOXY! EQU 29 (
+		SET /A A_TIMER_FOXY+=1
+		IF !FOXY! EQU 3 (
+			START /B "" CMD /C CALL ".\audiomanager.cmd" START run.mp3 sfx False 100 ^& EXIT >NUL 2>&1
+			SET /A FOXY+=1
+			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
+			>refresh SET /P "=" <NUL
+		)
+	) ELSE IF !A_TIMER_FOXY! EQU 31 (
+		SET /A A_TIMER_FOXY+=1
 		IF !FOXY! EQU 4 (
 			(ECHO.!STATES! | findstr /C:"doorL") >NUL && (
 				START /B "" CMD /C CALL ".\audiomanager.cmd" START knock2.mp3 sfx False 95 ^& EXIT >NUL 2>&1
@@ -186,13 +199,8 @@ IF EXIST SEEN_FOXY (
 			)
 			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
 			>refresh SET /P "=" <NUL
-		) ELSE IF !FOXY! EQU 3 (
-			START /B "" CMD /C CALL ".\audiomanager.cmd" START run.mp3 sfx False 100 ^& EXIT >NUL 2>&1
-			SET /A FOXY+=1
-			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
-			>refresh SET /P "=" <NUL
 		)
-	) ELSE IF !A_TIMER_FOXY! GTR 29 (
+	) ELSE IF !A_TIMER_FOXY! GTR 31 (
 		SET A_TIMER_FOXY=0
 	) ELSE SET /A A_TIMER_FOXY+=1
 )
@@ -259,10 +267,10 @@ IF !TIMER! GEQ 534 (
 )
 
 :: Random Sounds
-SET /A RND_SFX=%RANDOM% %% 350 +1
-IF !RND_SFX! EQU 1 START /B "" CMD /C CALL ".\audiomanager.cmd" START circus.mp3 sfx False 14 ^& EXIT >NUL 2>&1
-SET /A RND_SFX=%RANDOM% %% 175 +1
-IF !RND_SFX! EQU 1 START /B "" CMD /C CALL ".\audiomanager.cmd" START pirate_song2.mp3 sfx False 18 ^& EXIT >NUL 2>&1
+SET /A RND_SFX=%RANDOM% %% 475 +1
+IF !RND_SFX! EQU 1 START /B "" CMD /C CALL ".\audiomanager.cmd" START circus.mp3 sfx False 10 ^& EXIT >NUL 2>&1
+SET /A RND_SFX=%RANDOM% %% 250 +1
+IF !RND_SFX! EQU 1 START /B "" CMD /C CALL ".\audiomanager.cmd" START pirate_song2.mp3 sfx False 14 ^& EXIT >NUL 2>&1
 
 
 :: Timers

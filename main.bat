@@ -170,7 +170,6 @@ IF %VIEW%==CAMS (
 	IF %TAB% EQU 0 ECHO.[3;6HPress TAB to mute voice call
 	IF %CAMS_STATES%==_8_foxy (
 		BREAK>SEEN_FOXY
-		START /B "" CMD /C CALL ".\audiomanager.cmd" START run.mp3 sfx False 100 ^& EXIT >NUL 2>&1
 	)
 )
 REM TITLE [cams%CAMS_STATES%]
@@ -281,9 +280,6 @@ IF /I %CHOICE.INPUT%==SPACE (
 		IF %GOLDENFREDDY% EQU 1 (
 			START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL 2>&1
 		)
-		IF %CAMS_STATE%==_8 IF %FOXY% EQU 3 (
-			SET /A FOXY+=1
-		)
 	) ELSE (
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_down.mp3 camera_down False 100 ^& EXIT >NUL
 		START /B "" CMD /C CALL ".\audiomanager.cmd" STOP camera_up ^& EXIT >NUL
@@ -311,6 +307,10 @@ IF /I %CHOICE.INPUT%== (
 IF /I %CHOICE.INPUT%== (
 	SET JUMPSCARE=_foxy
 	GOTO :GAMEOVER
+)
+IF /I %CHOICE.INPUT%== (
+	TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T
+	GOTO :OUTAGE
 )
 IF /I %CHOICE.INPUT%== GOTO :WIN
 
@@ -391,7 +391,14 @@ IF %CHOICE.INPUT%==TIMEOUT (
 		)
 		IF %CAMS_STATE%==_8 (
 			IF NOT %OLD_FOXY% EQU !FOXY! IF !FOXY! EQU 3 ENDLOCAL&GOTO :RE
-			IF NOT %OLD_FOXY% EQU !FOXY! IF !FOXY! EQU 4 ENDLOCAL&GOTO :RE
+			IF NOT %OLD_FOXY% EQU !FOXY! IF !FOXY! EQU 4 (
+				ENDLOCAL
+				SET VIEW=OFFICE
+				SET /A FOXY+=1
+				START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_down.mp3 camera_down False 100 ^& EXIT >NUL
+				START /B "" CMD /C CALL ".\audiomanager.cmd" STOP camera_up ^& EXIT >NUL
+				GOTO :RE
+			)
 			IF NOT %OLD_BONNIE% EQU !BONNIE! IF !OLD_BONNIE! EQU 4 ENDLOCAL&GOTO :RE
 			IF NOT %OLD_BONNIE% EQU !BONNIE! IF !BONNIE! EQU 4 ENDLOCAL&GOTO :RE
 		)
