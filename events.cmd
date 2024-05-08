@@ -115,7 +115,7 @@ IF !S_CALC! EQU 0 (
 )
 
 :: Specifically for Foxy
-TITLE FOXY=%FOXY% S_TIMER_FOXY=%S_TIMER_FOXY% A_TIMER_FOXY=%A_TIMER_FOXY%
+REM TITLE FOXY=%FOXY% S_TIMER_FOXY=%S_TIMER_FOXY% A_TIMER_FOXY=%A_TIMER_FOXY%
 
 IF !FOXY! GEQ 5 (ECHO.!STATES! | findstr /C:"doorL") >NUL && (
 	START /B "" CMD /C CALL ".\audiomanager.cmd" START knock2.mp3 sfx False 95 ^& EXIT >NUL 2>&1
@@ -135,7 +135,7 @@ SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
 IF !F_CALC! EQU 0 IF !RND_FOXY! LEQ !MO_FOXY! IF !FOXY! LSS 3 (
 	SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
 	IF !RND_FOXY! LEQ !MO_FOXY! (
-		IF NOT !CAMS_STATES!==_5 (
+		IF NOT EXIST cams_state (
 			SET /A FOXY+=1
 			>refresh SET /P "=" <NUL
 			ECHO.MO: !FOXY! FOXY, TIMER: !TIMER_FOXY!
