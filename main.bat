@@ -27,6 +27,8 @@ IF NOT %1.==READY. IF %1.==LAUNCH. (
 	DEL /Q ".\SEEN_FOXY"
 	DEL /Q ".\BATTERY"
 	DEL /Q ".\TIME"
+	DEL /Q ".\saw_freddy"
+	DEL /Q ".\saw_cams"
 	EXIT 0
 ) ELSE (
 	(START /MIN "Launcher" conhost.exe -- "%~dpnx0" LAUNCH) && (ECHO. Launched [√]
@@ -79,8 +81,15 @@ IF %TITLE_STATE:~0,4%==_new GOTO :NEWSPAPER
 GOTO :GAME
 
 :NEWSPAPER
-TYPE ".\assets\newspaper.ans" > CON
-TIMEOUT /T 5 >NUL
+IF "%DIFFICULTY%"=="20 20 20 20" (
+	CALL ".\audiomanager.cmd" START Laugh_Giggle_Girl_8d.mp3 sfx False 35 >NUL 2>&1
+	TYPE ".\assets\twenty.ans" > CON
+	TIMEOUT /T 3 >NUL
+	START /B "" CMD /C CALL ".\audiomanager.cmd" STOP sfx ^& EXIT >NUL 2>&1
+) ELSE (
+	TYPE ".\assets\newspaper.ans" > CON
+	TIMEOUT /T 5 >NUL
+)
 
 :GAME
 CALL ".\audiomanager.cmd" START ambience2.mp3 ambience True 90
@@ -153,10 +162,10 @@ IF %CAMS_STATE%==_1 IF %CHICA% GTR 0 SET CAMS_STATES=%CAMS_STATES%_chica
 IF %CAMS_STATE%==_1 IF %BONNIE% GTR 0 SET CAMS_STATES=%CAMS_STATES%_bonnie
 IF %CAMS_STATE%==_2 IF %CHICA% EQU 1 SET CAMS_STATES=%CAMS_STATES%_chica
 IF %CAMS_STATE%==_2 IF %BONNIE% EQU 1 SET CAMS_STATES=%CAMS_STATES%_bonnie
-IF %CAMS_STATES%==_2 IF %FREDDY% EQU 1 SET CAMS_STATES=%CAMS_STATES%_freddy
+IF %CAMS_STATES%==_2 IF %FREDDY% EQU 1 SET CAMS_STATES=%CAMS_STATES%_freddy&BREAK>saw_freddy
 IF %CAMS_STATE%==_3 IF %BONNIE% EQU 2 SET CAMS_STATES=%CAMS_STATES%_bonnie
 IF %CAMS_STATE%==_4 IF %CHICA% EQU 2 SET CAMS_STATES=%CAMS_STATES%_chica
-IF %CAMS_STATES%==_4 IF %FREDDY% EQU 2 SET CAMS_STATES=%CAMS_STATES%_freddy
+IF %CAMS_STATES%==_4 IF %FREDDY% EQU 2 SET CAMS_STATES=%CAMS_STATES%_freddy&BREAK>saw_freddy
 IF %CAMS_STATE%==_5 IF %FOXY% EQU 1 SET CAMS_STATES=%CAMS_STATES%_foxy_1
 IF %CAMS_STATE%==_5 IF %FOXY% EQU 2 SET CAMS_STATES=%CAMS_STATES%_foxy_2
 IF %CAMS_STATE%==_5 IF %FOXY% GEQ 3 SET CAMS_STATES=%CAMS_STATES%_foxy_3
@@ -165,9 +174,9 @@ IF %CAMS_STATE%==_8 IF %BONNIE% EQU 4 SET CAMS_STATES=%CAMS_STATES%_bonnie
 IF %CAMS_STATE%==_8 IF %FOXY% EQU 3 SET CAMS_STATES=%CAMS_STATE%_foxy
 IF %CAMS_STATE%==_9 IF %BONNIE% EQU 5 SET CAMS_STATES=%CAMS_STATES%_bonnie
 IF %CAMS_STATE%==_10 IF %CHICA% EQU 4 SET CAMS_STATES=%CAMS_STATES%_chica
-IF %CAMS_STATES%==_10 IF %FREDDY% EQU 3 SET CAMS_STATES=%CAMS_STATES%_freddy
+IF %CAMS_STATES%==_10 IF %FREDDY% EQU 3 SET CAMS_STATES=%CAMS_STATES%_freddy&BREAK>saw_freddy
 IF %CAMS_STATE%==_11 IF %CHICA% EQU 5 SET CAMS_STATES=%CAMS_STATES%_chica
-IF %CAMS_STATES%==_11 IF %FREDDY% EQU 4 SET CAMS_STATES=%CAMS_STATES%_freddy
+IF %CAMS_STATES%==_11 IF %FREDDY% EQU 4 SET CAMS_STATES=%CAMS_STATES%_freddy&BREAK>saw_freddy
 
 IF %VIEW%==CAMS (
 	>cams_state SET /P "=%CAMS_STATE%" <NUL
@@ -295,6 +304,7 @@ IF /I %CHOICE.INPUT%==SPACE (
 	IF %VIEW%==OFFICE (
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_up.mp3 camera_up False 100 ^& EXIT >NUL
 		SET VIEW=CAMS
+		BREAK>saw_cams
 		IF %GOLDENFREDDY% EQU 1 (
 			START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL 2>&1
 		)
@@ -619,10 +629,15 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
-DEL /Q .\refresh >NUL 2>&1
-DEL /Q ".\BATTERY" >NUL 2>&1
-DEL /Q ".\TIME" >NUL 2>&1
-DEL /Q ".\WIN" >NUL 2>&1
+	DEL /Q ".\office_states"
+	DEL /Q ".\cams_state"
+	DEL /Q ".\MOVEMENTS.cmd"
+	DEL /Q ".\refresh"
+	DEL /Q ".\SEEN_FOXY"
+	DEL /Q ".\BATTERY"
+	DEL /Q ".\TIME"
+	DEL /Q ".\saw_freddy"
+	DEL /Q ".\saw_cams"
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
 TIMEOUT /T 4 /NOBREAK >NUL
 TYPE ".\assets\gameover.ans" > CON
@@ -635,10 +650,15 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
-DEL /Q .\refresh >NUL 2>&1
-DEL /Q ".\BATTERY" >NUL 2>&1
-DEL /Q ".\TIME" >NUL 2>&1
-DEL /Q ".\WIN" >NUL 2>&1
+	DEL /Q ".\office_states"
+	DEL /Q ".\cams_state"
+	DEL /Q ".\MOVEMENTS.cmd"
+	DEL /Q ".\refresh"
+	DEL /Q ".\SEEN_FOXY"
+	DEL /Q ".\BATTERY"
+	DEL /Q ".\TIME"
+	DEL /Q ".\saw_freddy"
+	DEL /Q ".\saw_cams"
 CALL ".\audiomanager.cmd" START chimes2.mp3 sfx False 100
 TYPE ".\assets\5am.ans" > CON
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
