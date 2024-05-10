@@ -90,6 +90,7 @@ IF !S_CALC! EQU 0 (
 		) ELSE IF !CHICA! GEQ 5 (
 			SET /A CHICA+=1
 		) ELSE (
+			START /B "" CMD /C CALL ".\audiomanager.cmd" START deepsteps.mp3 sfx False 22 ^& EXIT >NUL 2>&1
 			SET /A "RND_CHICA=%RANDOM% %% 5 + 1"
 			IF !RND_CHICA! LEQ 3 (
 				SET /A CHICA+=1
