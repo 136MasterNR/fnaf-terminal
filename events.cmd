@@ -44,13 +44,13 @@ IF EXIST cams_state (
 
 :: ::::::: ::
 :: Battery ::
-SET DRAIN=4
-(ECHO.!STATES! | findstr /C:"_doorL") >NUL && SET /A DRAIN+=13
-(ECHO.!STATES! | findstr /C:"_doorR") >NUL && SET /A DRAIN+=13
-(ECHO.!STATES! | findstr /C:"_lightL") >NUL && SET /A DRAIN+=13
-(ECHO.!STATES! | findstr /C:"_lightR") >NUL && SET /A DRAIN+=13
-(ECHO.!STATES! | findstr /C:"_bonnie") >NUL && SET /A DRAIN+=13
-(ECHO.!STATES! | findstr /C:"_chica") >NUL && SET /A DRAIN+=13
+SET DRAIN=5
+(ECHO.!STATES! | findstr /C:"_doorL") >NUL && SET /A DRAIN+=15
+(ECHO.!STATES! | findstr /C:"_doorR") >NUL && SET /A DRAIN+=15
+(ECHO.!STATES! | findstr /C:"_lightL") >NUL && SET /A DRAIN+=15
+(ECHO.!STATES! | findstr /C:"_lightR") >NUL && SET /A DRAIN+=15
+(ECHO.!STATES! | findstr /C:"_bonnie") >NUL && SET /A DRAIN+=15
+(ECHO.!STATES! | findstr /C:"_chica") >NUL && SET /A DRAIN+=15
 IF EXIST cams_state SET /A DRAIN+=13
 SET /A BATTERY-=DRAIN
 SET /A SEND_BATTERY=BATTERY/100
@@ -67,17 +67,17 @@ TITLE FNaF Events - Time: !TIMER! Power: !SEND_BATTERY! ^(Real: %BATTERY% - Drai
 
 :: :::::::::::::::::::::::::::::: ::
 :: Increase MO based on the timer ::
-IF !TIMER! EQU 25 SET /A MO_BONNIE+=1 &:: 0.5 minutes in
+IF NOT !MO_BONNIE! GTR 18 IF !TIMER! EQU 25 SET /A MO_BONNIE+=1 &:: 0.5 minutes in
 IF !TIMER! EQU 60 SET /A MO_CHICA+=1 &:: 1.0 minutes in
-IF !TIMER! EQU 150 SET /A MO_BONNIE+=1 &:: 2.5 minutes in
-IF !TIMER! EQU 240 SET /A MO_FREDDY+=2 &:: 4 minutes in
+IF NOT !MO_BONNIE! GTR 18 IF !TIMER! EQU 150 SET /A MO_BONNIE+=1 &:: 2.5 minutes in
+IF NOT !MO_FREDDY! GTR 18 IF !TIMER! EQU 240 SET /A MO_FREDDY+=2 &:: 4 minutes in
 IF !TIMER! EQU 300 SET /A MO_CHICA+=2 &:: 5 minutes in
-IF !TIMER! EQU 300 SET /A MO_FOXY+=2 &:: 5 minutes in
-IF !TIMER! EQU 300 SET /A MO_FOXY+=2 &:: 5 minutes in
-IF !TIMER! EQU 330 SET /A MO_FREDDY+=1 &:: 5.5 minutes in
+IF NOT !MO_FOXY! GTR 18 IF !TIMER! EQU 300 SET /A MO_FOXY+=2 &:: 5 minutes in
+IF NOT !MO_FOXY! GTR 18 IF !TIMER! EQU 300 SET /A MO_FOXY+=2 &:: 5 minutes in
+IF NOT !MO_FREDDY! GTR 18 IF !TIMER! EQU 330 SET /A MO_FREDDY+=1 &:: 5.5 minutes in
 IF !TIMER! EQU 420 SET /A MO_CHICA+=1 &:: 7 minutes in
-IF !TIMER! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
-IF !TIMER! EQU 480 SET /A MO_FREDDY+=2 &:: 8 minutes in
+IF NOT !MO_BONNIE! GTR 18 IF !TIMER! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
+IF NOT !MO_FREDDY! GTR 18 IF !TIMER! EQU 480 SET /A MO_FREDDY+=2 &:: 8 minutes in
 
 :: ::::::::::::::::::::: ::
 :: Movement Calculations :: [Bonnie & Chica]
@@ -232,7 +232,7 @@ IF EXIST SEEN_FOXY (
 :: :::::: ::
 :: Freddy ::
 
-TITLE FNaF Events - TIME: FREDDY=%FREDDY% TIMER_FREDDY=%TIMER_FREDDY%, !CAMS_STATES!
+REM TITLE FNaF Events - TIME: FREDDY=%FREDDY% TIMER_FREDDY=%TIMER_FREDDY%, !CAMS_STATES!
 
 SET /A F_CALC=TIMER %% 6
 IF !FREDDY! GTR 0 (
