@@ -29,6 +29,7 @@ IF NOT %1.==READY. IF %1.==LAUNCH. (
 	DEL /Q ".\TIME"
 	DEL /Q ".\saw_freddy"
 	DEL /Q ".\saw_cams"
+	DEL /Q ".\WIN"
 	EXIT 0
 ) ELSE (
 	(START /MIN "Launcher" conhost.exe -- "%~dpnx0" LAUNCH) && (ECHO. Launched [√]
@@ -61,7 +62,7 @@ IF /I %CHOICE.INPUT%==A (
 	SET DIFFICULTY=0 0 0 2
 	GOTO :START
 )
-IF /I %CHOICE.INPUT%==0 (
+IF /I %CHOICE.INPUT%== (
 	SET DIFFICULTY=20 20 20 20
 	GOTO :START
 )
@@ -659,6 +660,7 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
 	DEL /Q ".\TIME"
 	DEL /Q ".\saw_freddy"
 	DEL /Q ".\saw_cams"
+	DEL /Q ".\WIN"
 CALL ".\audiomanager.cmd" START chimes2.mp3 sfx False 100
 TYPE ".\assets\5am.ans" > CON
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1

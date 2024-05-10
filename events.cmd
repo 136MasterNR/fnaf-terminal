@@ -149,8 +149,9 @@ IF EXIST saw_cams (
 	DEL /Q ".\saw_cams"
 )
 
-SET /A F_CALC=TIMER_FOXY %% 6
+IF !TIMER_FOXY! GTR 5 (SET /A F_CALC=TIMER_FOXY %% 6) ELSE SET F_CALC=1
 SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
+
 
 IF !F_CALC! EQU 0 IF !RND_FOXY! LEQ !MO_FOXY! IF !FOXY! LSS 3 (
 	SET /A "RND_FOXY=%RANDOM% %% 19 + 1"
@@ -257,7 +258,7 @@ IF !TIMER_FREDDY! GTR 4 IF !F_CALC! EQU 0 IF !BONNIE! GTR 0 IF !CHICA! GTR 0 (
 	) ELSE (
 		(ECHO.!STATES! | findstr /C:"doorR") >NUL && (
 			SET /A RND=!RANDOM! %% 100 +1
-			IF !RND! LEQ 25 (
+			IF !RND! LEQ 33 (
 				SET FREDDY=1
 				SET /A RND=!RANDOM! %% 2 + 1
 				START /B "" CMD /C CALL ".\audiomanager.cmd" START running_fast3.mp3 sfx False 40 ^& EXIT >NUL 2>&1
