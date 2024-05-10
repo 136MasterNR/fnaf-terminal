@@ -58,6 +58,7 @@ IF NOT !OLD_BATTERY! EQU !SEND_BATTERY! (
 	ECHO.!SEND_BATTERY!>BATTERY
 	BREAK>refresh
 )
+IF !SEND_BATTERY! EQU 0 GOTO :AfterOutage
 SET OLD_BATTERY=!SEND_BATTERY!
 
 :: ::::: ::
@@ -73,7 +74,7 @@ IF !TIMER! EQU 240 SET /A MO_FREDDY+=2 &:: 4 minutes in
 IF !TIMER! EQU 300 SET /A MO_CHICA+=2 &:: 5 minutes in
 IF !TIMER! EQU 300 SET /A MO_FOXY+=2 &:: 5 minutes in
 IF !TIMER! EQU 300 SET /A MO_FOXY+=2 &:: 5 minutes in
-IF !TIMER! EQU 330 SET /A MO_FREDDY+=2 &:: 5.5 minutes in
+IF !TIMER! EQU 330 SET /A MO_FREDDY+=1 &:: 5.5 minutes in
 IF !TIMER! EQU 420 SET /A MO_CHICA+=1 &:: 7 minutes in
 IF !TIMER! EQU 450 SET /A MO_BONNIE+=2 &:: 7.5 minutes in
 IF !TIMER! EQU 480 SET /A MO_FREDDY+=2 &:: 8 minutes in
@@ -343,18 +344,35 @@ IF !TIMER! GEQ 534 (
 	EXIT 0
 )
 
-:: Random Sounds
+:: ::::::::::::: ::
+:: Random Sounds ::
 SET /A RND_SFX=%RANDOM% %% 475 +1
 IF !RND_SFX! EQU 1 START /B "" CMD /C CALL ".\audiomanager.cmd" START circus.mp3 sfx False 10 ^& EXIT >NUL 2>&1
 SET /A RND_SFX=%RANDOM% %% 250 +1
 IF !RND_SFX! EQU 1 START /B "" CMD /C CALL ".\audiomanager.cmd" START pirate_song2.mp3 sfx False 14 ^& EXIT >NUL 2>&1
 
-
-:: Timers
+:: :::::: ::
+:: Timers ::
 SET /A TIMER+=1
 SET /A TIMER_FREDDY+=1
 SET /A TIMER_FOXY+=1
-TIMEOUT /T 1 >NUL
+TIMEOUT /T 1 /NOBREAK >NUL
 
 :: Repeat
 GOTO :TIMER
+
+
+
+:AfterOutage
+TIMEOUT /T 1 /NOBREAK >NUL
+
+IF !TIMER! GEQ 534 (
+	BREAK>WIN
+	EXIT 0
+)
+
+ECHO.After Outage Timer: !TIMER!
+
+:: Timers
+SET /A TIMER+=1
+GOTO :AfterOutage

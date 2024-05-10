@@ -557,11 +557,32 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
-TIMEOUT /T 7 /NOBREAK >NUL
+
+SET /A RND=%RANDOM% %% 2 +1
+IF %RND% EQU 1 (
+	TIMEOUT /T 2 /NOBREAK >NUL
+	START /B "" CMD /C CALL ".\audiomanager.cmd" START running_fast3.mp3 sfx False 22 ^& EXIT >NUL 2>&1
+	TIMEOUT /T 3 /NOBREAK >NUL
+) ELSE (
+	TIMEOUT /T 3 /NOBREAK >NUL
+	START /B "" CMD /C CALL ".\audiomanager.cmd" START deepsteps.mp3 sfx False 22 ^& EXIT >NUL 2>&1
+	TIMEOUT /T 6 /NOBREAK >NUL
+)
+SET /A RND=%RANDOM% %% 2 +1
+IF %RND% EQU 1 (
+	START /B "" CMD /C CALL ".\audiomanager.cmd" START running_fast3.mp3 sfx False 22 ^& EXIT >NUL 2>&1
+	TIMEOUT /T 3 /NOBREAK >NUL
+) ELSE (
+	START /B "" CMD /C CALL ".\audiomanager.cmd" START deepsteps.mp3 sfx False 22 ^& EXIT >NUL 2>&1
+	TIMEOUT /T 6 /NOBREAK >NUL
+)
+SET /A RND=%RANDOM% %% 2 +1
+IF %RND% EQU 1 (
+	START /B "" CMD /C CALL ".\audiomanager.cmd" START running_fast3.mp3 sfx False 22 ^& EXIT >NUL 2>&1
+	TIMEOUT /T 3 /NOBREAK >NUL
+)
 START /B "" CMD /C CALL ".\audiomanager.cmd" START deepsteps.mp3 sfx False 22 ^& EXIT >NUL 2>&1
 TIMEOUT /T 7 /NOBREAK >NUL
-START /B "" CMD /C CALL ".\audiomanager.cmd" START deepsteps.mp3 sfx False 22 ^& EXIT >NUL 2>&1
-TIMEOUT /T 6 /NOBREAK >NUL
 CALL ".\audiomanager.cmd" START musicbox.mp3 musicbox False 90
 
 (
@@ -606,18 +627,21 @@ CALL ".\audiomanager.cmd" START musicbox.mp3 musicbox False 90
 	ECHO TIMEOUT /T 0 /NOBREAK ^>NUL
 	ECHO GOTO :L
 )>".\temp\outagefreddy.cmd"
+SET /A RND=%RANDOM% %% 9 +11
 START /B "" CMD /C CALL ".\temp\outagefreddy.cmd" ^& EXIT 2>NUL
-TIMEOUT /T 20 /NOBREAK >NUL
+TIMEOUT /T %RND% /NOBREAK >NUL
 ECHO.>.\temp\STOP
 TIMEOUT /T 1 /NOBREAK >NUL
 DEL /Q ".\temp\outagefreddy.cmd" >NUL 2>&1
 DEL /Q ".\temp\STOP" >NUL 2>&1
 CALL ".\audiomanager.cmd" STOP musicbox
 TYPE ".\assets\office_outage.ans" > CON
-TIMEOUT /T 12 /NOBREAK >NUL
-SET JUMPSCARE=_freddy
-GOTO :GAMEOVER
-EXIT /B 0
+SET /A RND=%RANDOM% %% 4 +8
+TIMEOUT /T %RND% /NOBREAK >NUL
+IF EXIST WIN (GOTO :WIN) ELSE (
+	SET JUMPSCARE=_freddy
+	GOTO :GAMEOVER
+)
 
 
 :GAMEOVER
@@ -642,7 +666,7 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
 TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
 TIMEOUT /T 4 /NOBREAK >NUL
 TYPE ".\assets\gameover.ans" > CON
-TIMEOUT /T 9 >NUL
+TIMEOUT /T 9 /NOBREAK >NUL
 GOTO :LAUNCH
 
 :WIN
