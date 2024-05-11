@@ -59,7 +59,6 @@ IF NOT !OLD_BATTERY! EQU !SEND_BATTERY! (
 	ECHO.!SEND_BATTERY!>BATTERY
 	BREAK>refresh
 )
-IF !SEND_BATTERY! EQU 0 GOTO :AfterOutage
 SET OLD_BATTERY=!SEND_BATTERY!
 
 :: ::::: ::
@@ -331,7 +330,7 @@ IF %TIMER% EQU 89 (
 IF !SEND_BATTERY! LEQ 0 (
 	TASKKILL /IM xcopy.exe /F >NUL 2>&1 && (
 		ECHO. [Q] Events safely stopped.
-		EXIT
+		GOTO :AfterOutage
 	) || (
 		ECHO.[-] Attempting to update the main process...
 		GOTO :FORCE_REFRESH
