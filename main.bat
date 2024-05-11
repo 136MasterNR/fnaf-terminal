@@ -220,6 +220,7 @@ SET OLD_BONNIE=%BONNIE%
 SET OLD_FOXY=%FOXY%
 SET OLD_FREDDY=%FREDDY%
 
+SET CHOICE.INPUT=
 CALL .\choice.cmd
 IF %VIEW%==OFFICE (
 	IF /I %CHOICE.INPUT%==E (
@@ -308,6 +309,8 @@ IF %VIEW%==CAMS (
 
 IF /I %CHOICE.INPUT%==SPACE (
 	IF %VIEW%==OFFICE (
+		SET L_LIGHTS=0
+		SET R_LIGHTS=0
 		START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan ^& EXIT >NUL
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START Buzz_Fan_Florescent2.mp3 fan2 True 8 ^& EXIT >NUL 2>&1
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_up.mp3 camera_up False 100 ^& EXIT >NUL

@@ -235,6 +235,8 @@ IF EXIST SEEN_FOXY (
 
 REM TITLE FNaF Events - TIME: FREDDY=%FREDDY% TIMER_FREDDY=%TIMER_FREDDY%, !CAMS_STATES!
 
+SET /A "RND_FREDDY=%RANDOM% %% 19 + 1"
+
 SET /A F_CALC=TIMER %% 5
 IF !FREDDY! GTR 0 (
 	IF !FREDDY! LEQ 3 (
@@ -259,12 +261,12 @@ IF !FREDDY! GTR 0 (
 			ECHO.MO: !FREDDY! FREDDY
 		)
 
-		IF !F_CALC! EQU 0 IF %TIMER_FREDDY% EQU 0 (
+		IF !F_CALC! EQU 0 IF !RND_FREDDY! LEQ !MO_FREDDY! IF !TIMER_FREDDY! EQU 0 (
 			SET TIMER_FREDDY=10
 		)
 
 	) ELSE IF !FREDDY! EQU 4 (
-		IF !F_CALC! EQU 0 IF NOT EXIST saw_freddy (
+		IF !F_CALC! EQU 0 IF !RND_FREDDY! LEQ !MO_FREDDY! IF NOT EXIST saw_freddy (
 			IF NOT !CAMS_STATES!==_11 (ECHO.!STATES! | findstr /C:"doorR") >NUL && (
 				SET /A RND=!RANDOM! %% 3 + 1
 				START /B "" CMD /C CALL ".\audiomanager.cmd" START running_fast3.mp3 sfx False 40 ^& EXIT >NUL 2>&1
@@ -281,7 +283,7 @@ IF !FREDDY! GTR 0 (
 		) ELSE DEL /Q ".\saw_freddy"
 	) ELSE SET /A FREDDY-=1
 ) ELSE (
-	IF !F_CALC! EQU 0 IF %TIMER_FREDDY% EQU 0 IF !BONNIE! GTR 0 IF !CHICA! GTR 0 (
+	IF !F_CALC! EQU 0 IF !RND_FREDDY! LEQ !MO_FREDDY! IF !TIMER_FREDDY! EQU 0 IF !BONNIE! GTR 0 IF !CHICA! GTR 0 (
 		SET /A RND=!RANDOM! %% 3 + 1
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START running_fast3.mp3 sfx False 40 ^& EXIT >NUL 2>&1
 		IF !RND! EQU 1 START /B "" CMD /C CALL ".\audiomanager.cmd" START Laugh_Giggle_Girl_1d.mp3 sfx False 40 ^& EXIT >NUL 2>&1
