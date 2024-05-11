@@ -97,7 +97,8 @@ IF "%DIFFICULTY%"=="20 20 20 20" (
 
 :GAME
 CALL ".\audiomanager.cmd" START ambience2.mp3 ambience True 90
-CALL ".\audiomanager.cmd" START voiceover1c.mp3 voiceover False 100
+CALL ".\audiomanager.cmd" START voiceover1c.mp3 voiceover False 75
+START /B "" CMD /C CALL ".\audiomanager.cmd" START Buzz_Fan_Florescent2.mp3 fan True 25 ^& EXIT >NUL 2>&1
 
 START /MIN .\events.cmd %DIFFICULTY%
 
@@ -306,6 +307,8 @@ IF %VIEW%==CAMS (
 
 IF /I %CHOICE.INPUT%==SPACE (
 	IF %VIEW%==OFFICE (
+		START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan ^& EXIT >NUL
+		START /B "" CMD /C CALL ".\audiomanager.cmd" START Buzz_Fan_Florescent2.mp3 fan2 True 8 ^& EXIT >NUL 2>&1
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_up.mp3 camera_up False 100 ^& EXIT >NUL
 		SET VIEW=CAMS
 		BREAK>saw_cams
@@ -313,6 +316,8 @@ IF /I %CHOICE.INPUT%==SPACE (
 			START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL 2>&1
 		)
 	) ELSE (
+		START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan2 ^& EXIT >NUL
+		START /B "" CMD /C CALL ".\audiomanager.cmd" START Buzz_Fan_Florescent2.mp3 fan True 25 ^& EXIT >NUL 2>&1
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_down.mp3 camera_down False 100 ^& EXIT >NUL
 		START /B "" CMD /C CALL ".\audiomanager.cmd" STOP camera_up ^& EXIT >NUL
 		CALL :GOLDENFREDDY
@@ -550,6 +555,8 @@ EXIT /B 0
 
 
 :OUTAGE
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan ^& EXIT >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan2 ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" START powerdown.mp3 powerdown False 100 ^& EXIT >NUL 2>&1
 IF NOT %VIEW%==OFFICE (
 	START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_down.mp3 camera_down False 100 ^& EXIT >NUL
@@ -648,6 +655,8 @@ IF EXIST WIN (GOTO :WIN) ELSE (
 
 
 :GAMEOVER
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan ^& EXIT >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan2 ^& EXIT >NUL
 DEL /Q ".\SEEN_FOXY"
 CALL ".\audiomanager.cmd" START XSCREAM.mp3 sfx False 100
 HELP >NUL
@@ -674,6 +683,8 @@ GOTO :LAUNCH
 
 :WIN
 DEL /Q ".\SEEN_FOXY"
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan ^& EXIT >NUL
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan2 ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP voiceover ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP oven ^& EXIT >NUL
