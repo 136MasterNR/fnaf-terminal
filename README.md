@@ -12,8 +12,14 @@
 
 </div>
 
-FNaF Terminal Edition is a recreation of Five Nights at Freddy's but in a terminal, specifically made in batch script. This game follows all the rules from the original game, with some exceptions.
+FNaF Terminal Edition is a recreation of Five Nights at Freddy's but in a terminal, specifically made in batch script. This game follows all the rules from the original game, with very few exceptions.
 
 <br/>
 
 ![image](https://github.com/136MasterNR/fnaf-terminal/assets/62593379/5cb17f79-0219-4a91-bbcf-289a3b071b29)
+
+<br/>
+
+<br/>
+
+To activate 20/20/20/20 mode press CTRL + S while in the start screen.
