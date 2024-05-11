@@ -9,10 +9,27 @@ IF EXIST .\logs.txt EXIT 1
 
 IF NOT EXIST .\temp MD .\temp
 
+SET SCSCRIPT="%TEMP%\%random%-%random%-%random%-%random%.vbs"
+
 IF NOT %1.==READY. IF %1.==LAUNCH. (
 	CLS
 	TITLE Launcher
 	ECHO.This is the game's launcher, do not close.
+	REM Shortcut
+	IF NOT EXIST "FNaF  Terminal.lnk" (
+		(
+			ECHO Set oWS = WScript.CreateObject^("WScript.Shell"^)
+			ECHO sLinkFile = "%cd%\FNaF  Terminal.lnk"
+			ECHO Set oLink = oWS.CreateShortcut^(sLinkFile^)
+			ECHO oLink.TargetPath = "%cd%\%~n0"
+			ECHO oLink.WorkingDirectory = "%cd%"
+			ECHO oLink.IconLocation = "%cd%\assets\icon_256.ico"
+			ECHO oLink.WindowStyle = 7
+			ECHO oLink.Save
+		) > %SCSCRIPT%
+		CSCRIPT /nologo %SCSCRIPT%
+		DEL %SCSCRIPT%
+	)
 	START /WAIT "Launcher" "conhost.exe" -- "%~dpnx0" READY
 	ECHO.Shutting down...
 	(TASKKILL /F /FI "WINDOWTITLE eq mpg123*" /IM "cmd.exe" /T | FINDSTR ":" && (
