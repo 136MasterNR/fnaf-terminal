@@ -19,6 +19,7 @@ IF NOT %1.==READY. IF %1.==LAUNCH. (
 		TASKKILL /F /FI "WINDOWTITLE eq Administrator:  mpg123*" /IM "cmd.exe" /T
 	))
 	TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T
+	TASKKILL /F /IM mpg123.exe
 	RD "./temp" /S /Q
 	DEL /Q ".\office_states"
 	DEL /Q ".\cams_state"
