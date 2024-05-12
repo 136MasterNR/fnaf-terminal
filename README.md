@@ -20,6 +20,8 @@ FNaF Terminal Edition is a recreation of Five Nights at Freddy's but in a termin
 
 <br/>
 
+Credits to [Office remake](https://www.reddit.com/r/fivenightsatfreddys/comments/gqd36m/fnaf1_office_remake/) for the office assets.
+
 <br/>
 
 To activate 20/20/20/20 mode press CTRL + S while in the start screen.
