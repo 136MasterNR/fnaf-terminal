@@ -100,6 +100,7 @@ IF /I %CHOICE.INPUT%==A (
 	GOTO :START
 )
 IF /I %CHOICE.INPUT%== (
+	SET DIFFICULTY=20 20 20 20
 	GOTO :START
 )
 
@@ -120,9 +121,7 @@ IF %TITLE_STATE:~0,4%==_new (
 		ECHO.level=1
 	)>"%APPDATA%\fnaf-terminal\freddy"
 	SET freddy[level]=1
-	GOTO :NEWSPAPER
 )
-GOTO :GAME
 
 :NEWSPAPER
 IF "%DIFFICULTY%"=="20 20 20 20" (
@@ -130,9 +129,13 @@ IF "%DIFFICULTY%"=="20 20 20 20" (
 	TYPE ".\assets\twenty.ans" > CON
 	TIMEOUT /T 3 >NUL
 	START /B "" CMD /C CALL ".\audiomanager.cmd" STOP sfx ^& EXIT >NUL 2>&1
-) ELSE (
+) ELSE IF %freddy[level]% EQU 1 (
 	TYPE ".\assets\newspaper.ans" > CON
 	TIMEOUT /T 5 >NUL
+	TYPE ".\assets\night_%freddy[level]%.ans" > CON
+) ELSE (
+	TYPE ".\assets\night_%freddy[level]%.ans" > CON
+	TIMEOUT /T 3 >NUL
 )
 
 :GAME
@@ -141,6 +144,7 @@ IF %freddy[level]% EQU 2 SET DIFFICULTY=0 1 1 1
 IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 2
 IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 2
 IF %freddy[level]% EQU 5 SET DIFFICULTY=3 7 7 6
+IF %CHOICE.INPUT%.==. SET DIFFICULTY=20 20 20 20
 
 CALL ".\audiomanager.cmd" START ambience2.mp3 ambience True 90
 CALL ".\audiomanager.cmd" START voiceover%freddy[level]%.mp3 voiceover False 75
@@ -319,6 +323,7 @@ SET OLD_FREDDY=%FREDDY%
 
 SET CHOICE.INPUT=
 CALL .\choice.cmd
+IF %CHOICE.INPUT%.==. GOTO :CHOICE
 IF %VIEW%==OFFICE (
 	IF /I %CHOICE.INPUT%==E (
 		IF %GOLDENFREDDY% EQU 0 (
@@ -785,6 +790,7 @@ GOTO :LAUNCH
 
 :WIN
 DEL /Q ".\SEEN_FOXY"
+START /B "" CMD /C CALL ".\audiomanager.cmd" STOP sfx ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan2 ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP ambience ^& EXIT >NUL
