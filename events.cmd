@@ -135,8 +135,6 @@ IF !S_CALC! EQU 0 (
 :: :::: ::
 :: Foxy ::
 
-REM TITLE FNaF Events - TIME: FOXY=%FOXY% S_TIMER_FOXY=%S_TIMER_FOXY% A_TIMER_FOXY=%A_TIMER_FOXY%
-
 IF !FOXY! GEQ 5 (ECHO.!STATES! | findstr /C:"doorL") >NUL && (
 	START /B "" CMD /C CALL ".\audiomanager.cmd" START knock2.mp3 sfx False 95 ^& EXIT >NUL 2>&1
 	SET FOXY=0
@@ -234,8 +232,6 @@ IF EXIST SEEN_FOXY (
 
 :: :::::: ::
 :: Freddy ::
-
-REM TITLE FNaF Events - TIME: FREDDY=%FREDDY% TIMER_FREDDY=%TIMER_FREDDY%, !CAMS_STATES!
 
 SET /A "RND_FREDDY=%RANDOM% %% 19 + 1"
 
