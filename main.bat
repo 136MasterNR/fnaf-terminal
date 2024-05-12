@@ -60,9 +60,25 @@ EXIT 1
 
 :LAUNCH
 ECHO.[?25l
+SET "RGB=[48;2;"
 :: Real Size: w185 h104
 MODE CON: COLS=185 LINES=53
-SET TITLE_STATE=_new
+
+:: Saves
+IF NOT EXIST "%APPDATA%\fnaf-terminal" MD "%APPDATA%\fnaf-terminal"
+IF NOT EXIST "%APPDATA%\fnaf-terminal" ECHO.Unable to read or write in "%APPDATA%"&PAUSE>NUL&EXIT 1
+IF NOT EXIST "%APPDATA%\fnaf-terminal\freddy" (
+	ECHO.[freddy]
+	ECHO.level=1
+)>"%APPDATA%\fnaf-terminal\freddy"
+IF NOT EXIST "%APPDATA%\fnaf-terminal\freddy" ECHO.Unable to read or write in "%APPDATA%\freddy"&PAUSE>NUL&EXIT 1
+
+CALL ".\io.cmd" READ "%APPDATA%\fnaf-terminal\freddy" freddy
+
+IF %freddy[level]% GTR 1 (
+	SET TITLE_STATE=_continue
+) ELSE SET TITLE_STATE=_new
+
 START /B "" CMD /C CALL ".\audiomanager.cmd" START darkness_music.mp3 title True 95 ^& EXIT >NUL 2>&1
 START /B "" CMD /C CALL ".\audiomanager.cmd" START coldprescb.mp3 title True 75 ^& EXIT >NUL 2>&1
 START /B "" CMD /C CALL ".\audiomanager.cmd" START static2.mp3 title False 75 ^& EXIT >NUL 2>&1
@@ -70,21 +86,20 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" START static2.mp3 title False 75 ^&
 TYPE ".\assets\title%TITLE_STATE%_o.ans"
 :TITLE
 TYPE ".\assets\title%TITLE_STATE%.ans" > CON
+IF %TITLE_STATE%==_continue_half ECHO.[49;17H%RGB%0;0;0mNight %freddy[level]%
+IF %TITLE_STATE%==_continue ECHO.[49;17H%RGB%0;0;0mNight %freddy[level]%
+IF NOT %TITLE_STATE%==_continue_half IF NOT %TITLE_STATE%==_continue ECHO.[49;17H%RGB%0;0;0m       
 CALL .\choice.cmd
 IF %CHOICE.INPUT%.==. (
-	SET DIFFICULTY=0 0 0 1
 	GOTO :START
 )
 IF %CHOICE.INPUT%==SPACE (
-	SET DIFFICULTY=0 0 0 1
 	GOTO :START
 )
 IF /I %CHOICE.INPUT%==A (
-	SET DIFFICULTY=0 0 0 1
 	GOTO :START
 )
 IF /I %CHOICE.INPUT%== (
-	SET DIFFICULTY=20 20 20 20
 	GOTO :START
 )
 
@@ -99,7 +114,14 @@ GOTO :TITLE
 
 :START
 CALL ".\audiomanager.cmd" STOP title
-IF %TITLE_STATE:~0,4%==_new GOTO :NEWSPAPER
+IF %TITLE_STATE:~0,4%==_new (
+	(
+		ECHO.[freddy]
+		ECHO.level=1
+	)>"%APPDATA%\fnaf-terminal\freddy"
+	SET freddy[level]=1
+	GOTO :NEWSPAPER
+)
 GOTO :GAME
 
 :NEWSPAPER
@@ -114,14 +136,19 @@ IF "%DIFFICULTY%"=="20 20 20 20" (
 )
 
 :GAME
+IF %freddy[level]% EQU 1 SET DIFFICULTY=0 0 0 0
+IF %freddy[level]% EQU 2 SET DIFFICULTY=0 1 1 1
+IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 2
+IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 2
+IF %freddy[level]% EQU 5 SET DIFFICULTY=3 7 7 6
+
 CALL ".\audiomanager.cmd" START ambience2.mp3 ambience True 90
-CALL ".\audiomanager.cmd" START voiceover1c.mp3 voiceover False 75
+CALL ".\audiomanager.cmd" START voiceover%freddy[level]%.mp3 voiceover False 75
 START /B "" CMD /C CALL ".\audiomanager.cmd" START Buzz_Fan_Florescent2.mp3 fan True 25 ^& EXIT >NUL 2>&1
 
 START /MIN .\events.cmd %DIFFICULTY%
 
 :: UI
-SET "RGB=[48;2;"
 SET TAB=0
 SET REVERSE=
 SET R_DOOR=0
@@ -247,9 +274,12 @@ IF %VIEW%==CAMS (
 :: Update battery and time
 IF EXIST BATTERY SET /P BATTERY=<BATTERY
 IF %BATTERY% LEQ 0 GOTO :OUTAGE
-IF %VIEW%==OFFICE ( ECHO.[47;5H%RGB%93;68;72mP%RGB%2;2;2mower:%RGB%0;0;0m %BATTERY%%% ) ELSE (
+IF %VIEW%==OFFICE (
+	IF %L_DOOR% EQU 1 (
+		ECHO.[47;5H%RGB%93;68;72mP%RGB%2;2;2mower:%RGB%0;0;0m %BATTERY%%%%RGB%209;48;0m 
+	) ELSE ECHO.[47;5H%RGB%93;68;72mP%RGB%2;2;2mower:%RGB%0;0;0m %BATTERY%%% 
+) ELSE (
 	IF %CAMS_STATE%==_1 (
-		TITLE %CAMS_STATES%
 		IF %CAMS_STATES%==_1_freddy_chica (
 			ECHO.[47;5H%RGB%171;181;202mP%RGB%0;0;8mowe%RGB%156;166;185mr: %BATTERY%%%%RGB%19;19;23m [m
 		) ELSE IF %CAMS_STATES%==_1_freddy (
@@ -427,7 +457,7 @@ IF /I %CHOICE.INPUT%== (
 	TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T
 	GOTO :OUTAGE
 )
-IF /I %CHOICE.INPUT%== GOTO :WIN
+IF /I %CHOICE.INPUT%== GOTO :WIN
 
 IF /I %CHOICE.INPUT%== EXIT /B 0
 
@@ -779,4 +809,11 @@ CALL ".\audiomanager.cmd" START CROWD_SMALL_CHIL_EC049202.mp3 sfx False 100
 CALL ".\assets\6am.cmd"
 TIMEOUT /T 7 >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP sfx ^& EXIT >NUL
+
+IF NOT %freddy[level]% GTR 5 SET /A freddy[level]+=1
+(
+	ECHO.[freddy]
+	ECHO.level=%freddy[level]%
+)>"%APPDATA%\fnaf-terminal\freddy"
+
 GOTO :LAUNCH
