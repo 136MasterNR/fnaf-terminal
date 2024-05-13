@@ -221,7 +221,7 @@ SET CAMS_STATES=%CAMS_STATE%
 IF %CAMS_STATE%==_1 IF %FREDDY% EQU 0 SET CAMS_STATES=%CAMS_STATES%_freddy
 IF %CAMS_STATE%==_1 IF %BONNIE% EQU 0 SET CAMS_STATES=%CAMS_STATES%_bonnie
 IF %CAMS_STATE%==_1 IF %CHICA% EQU 0 SET CAMS_STATES=%CAMS_STATES%_chica
-IF %CAMS_STATES%==_1_freddy_bonnie_chica SET /A RND_STAGE=%RANDOM% %% 15 +1
+IF %CAMS_STATES%==_1_freddy_bonnie_chica SET /A RND_STAGE=%RANDOM% %% 25 +1
 IF %CAMS_STATES%==_1_freddy_bonnie_chica IF %RND_STAGE% EQU 1 SET CAMS_STATES=%CAMS_STATES%_
 IF %CAMS_STATE%==_2 IF %CHICA% EQU 1 SET CAMS_STATES=%CAMS_STATE%_chica_%RND_CHICA%
 IF %CAMS_STATE%==_2 IF %BONNIE% EQU 1 SET CAMS_STATES=%CAMS_STATE%_bonnie_%RND_BONNIE%
@@ -830,7 +830,7 @@ TIMEOUT /T 7 >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP sfx ^& EXIT >NUL
 
 IF %freddy[level]% LEQ 4 SET /A freddy[level]+=1
-IF %freddy[level]% LEQ 4 (
+IF %freddy[level]% LEQ 5 (
 	ECHO.[freddy]
 	ECHO.level=%freddy[level]%
 )>"%APPDATA%\fnaf-terminal\freddy"
