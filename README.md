@@ -16,12 +16,46 @@ FNaF Terminal Edition is a recreation of Five Nights at Freddy's but in a termin
 
 <br/>
 
-![image](https://github.com/136MasterNR/fnaf-terminal/assets/62593379/5cb17f79-0219-4a91-bbcf-289a3b071b29)
 
+## Installation Process
+  - **Latest releases**: [fnaf-terminal.zip](https://github.com/136MasterNR/fnaf-terminal/releases/latest/download/fnaf-terminal.zip), [fnaf-terminal.rar](https://github.com/136MasterNR/fnaf-terminal/releases/latest/download/fnaf-terminal.rar), [fnaf-terminal.7z](https://github.com/136MasterNR/fnaf-terminal/releases/latest/download/fnaf-terminal.7z), 
+  - **Source code**: [fnaf-terminal-main.zip](https://github.com/136MasterNR/fnaf-terminal/archive/refs/heads/main.zip)
+
+After the download is complete, extract and run the batch file `main.bat`.
+
+This project is only available on Windows, with a required command line version at least 10.0.1 and higher.
+
+**Recommended Command Prompt settings**:
+- **Font size**: 18 or 20 (for 1080p displays), 13 (for 720p displays)
+- **Font family**: Consolas
+
+This project uses [ANSI](https://www.robvanderwoude.com/ansi.php) as a text formatter. This is how images are rendered.
+# About
+## Game Controls
+  - **Title Screen**: 
+    - ***W***/***1***/***N***: Select "New Game".
+    - ***S***/***2***/***C***: Select "Continue".
+    - ***A***/***Space***/***Enter***: Start the night.
+    - ***CTRL + S***: Activate 20/20/20/20 mode.
+  - **Night (During Gameplay)**
+    - ***Q***: Close/Open left door. (Toggle)
+    - ***S***: Open/Close left lights. (Toggle)
+    - ***E***: Close/Open right door. (Toggle)
+    - ***D***: Open/Close right lights. (Toggle)
+    - ***Space***: Open cams.
+
+      **Cams**: Press a number between `0` and `9` to switch cameras. Press `-` for camera 11.
+
+# Screenshots
 <br/>
+
+![image](https://github.com/136MasterNR/fnaf-terminal/assets/62593379/5cb17f79-0219-4a91-bbcf-289a3b071b29)
 
 Credits to [Office remake](https://www.reddit.com/r/fivenightsatfreddys/comments/gqd36m/fnaf1_office_remake/) for the office assets.
 
-<br/>
+![image](https://github.com/136MasterNR/fnaf-terminal/assets/62593379/934f9013-6e66-4f11-bda5-c03c00ad4eff)
 
-To activate 20/20/20/20 mode press CTRL + S while in the start screen.
+## 
+
+Not affiliated with or endorsed by the original game or its authors in any way.
+Five Nights At Freddy's by Scott Cawthon
