@@ -37,14 +37,20 @@ This project uses [ANSI](https://www.robvanderwoude.com/ansi.php) as a text form
     - ***S***/***2***/***C***: Select "Continue".
     - ***A***/***Space***/***Enter***: Start the night.
     - ***CTRL + S***: Activate 20/20/20/20 mode.
-  - **Night (During Gameplay)**
+  - **Night (During Gameplay)**:
     - ***Q***: Close/Open left door. (Toggle)
     - ***S***: Open/Close left lights. (Toggle)
     - ***E***: Close/Open right door. (Toggle)
     - ***D***: Open/Close right lights. (Toggle)
-    - ***Space***: Open cams.
-
-      **Cams**: Press a number between `0` and `9` to switch cameras. Press `-` for camera 11.
+    - ***Space***: Open cams.<br/>
+      **When in Cams**: Press a number between `0` and `9` to switch cameras. Press `-` for camera 11.
+    - ***Tab***/***CTRL + I***: Mute voice call.
+    - ***H***: Honk freddy's nose.
+    - ***CTRL + N***: Die to Chica.
+    - ***CTRL + B***: Die to Bonnie.
+    - ***CTRL + X***: Die to Foxy.
+    - ***CTRL + O***: Cause an outage and die to freddy.
+    - ***CTRL + W***: Instant win.
 
 # Screenshots
 <br/>
@@ -57,5 +63,5 @@ Credits to [Office remake](https://www.reddit.com/r/fivenightsatfreddys/comments
 
 ## 
 
-Not affiliated with or endorsed by the original game or its authors in any way.
-Five Nights At Freddy's by Scott Cawthon
+Not affiliated with or endorsed by the original game or its authors in any way.<br/>
+Five Nights At Freddy's by Scott Cawthon.
