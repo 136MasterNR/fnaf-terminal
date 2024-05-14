@@ -62,7 +62,7 @@ EXIT 1
 ECHO.[?25l
 SET "RGB=[48;2;"
 :: Real Size: w185 h104
-MODE CON: COLS=185 LINES=53
+MODE CON: COLS=185 LINES=52
 
 :: Saves
 IF NOT EXIST "%APPDATA%\fnaf-terminal" MD "%APPDATA%\fnaf-terminal"
@@ -141,8 +141,8 @@ IF "%DIFFICULTY%"=="20 20 20 20" (
 :GAME
 IF %freddy[level]% EQU 1 SET DIFFICULTY=0 0 0 0
 IF %freddy[level]% EQU 2 SET DIFFICULTY=0 1 1 1
-IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 2
-IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 2
+IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 4
+IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 4
 IF %freddy[level]% EQU 5 SET DIFFICULTY=3 7 7 6
 IF %CHOICE.INPUT%.==. SET DIFFICULTY=20 20 20 20
 
@@ -257,7 +257,7 @@ IF %VIEW%==CAMS (
 				ECHO.[49;67H%RGB%93;96;124m[1mPress %RGB%93;96;124mSPA%RGB%4;4;4mCE %RGB%128;134;151mto%RGB%27;27;27m cl%RGB%67;67;88mose t%RGB%106;111;133mhe c%RGB%2;2;2mams[0m
 			) ELSE ECHO.[49;67H%RGB%9;17;21m[1mPress SPAC%RGB%28;36;39mE to c%RGB%9;17;21mlose the cams[0m
 		) ELSE IF %CAMS_STATE%==_4 (
-			IF %CAMS_STATES%==_4_chica (
+			IF %CAMS_STATES%==_4_chica_0 (
 				ECHO.[49;67H%RGB%43;42;43m[1mP%RGB%87;87;97mre%RGB%47;43;41mss SPACE to cl%RGB%70;70;80mose the cams[0m
 			) ELSE ECHO.[49;67H%RGB%3;3;13m[1mPress SP%RGB%83;84;93mACE to %RGB%16;16;16mclose the cams[0m
 		) ELSE IF %CAMS_STATE%==_6 (
