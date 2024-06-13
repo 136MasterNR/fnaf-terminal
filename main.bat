@@ -142,7 +142,7 @@ IF "%DIFFICULTY%"=="20 20 20 20" (
 IF %freddy[level]% EQU 1 SET DIFFICULTY=0 0 0 0
 IF %freddy[level]% EQU 2 SET DIFFICULTY=0 1 1 1
 IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 4
-IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 4
+IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 5
 IF %freddy[level]% EQU 5 SET DIFFICULTY=3 7 7 6
 IF %CHOICE.INPUT%.==. SET DIFFICULTY=20 20 20 20
 
@@ -244,7 +244,7 @@ IF %CAMS_STATES%==_10 IF %FREDDY% EQU 3 SET CAMS_STATES=%CAMS_STATES%_freddy
 IF %CAMS_STATE%==_10 IF %FREDDY% EQU 3 BREAK>saw_freddy
 IF %CAMS_STATE%==_11 IF %CHICA% EQU 5 SET CAMS_STATES=%CAMS_STATES%_chica_%RND_CHICA%
 IF %CAMS_STATES%==_11 IF %FREDDY% GEQ 4 SET CAMS_STATES=%CAMS_STATES%_freddy
-IF %CAMS_STATES%==_11 IF %FREDDY% GEQ 4 BREAK>saw_freddy
+IF %CAMS_STATE%==_11 IF %FREDDY% GEQ 4 BREAK>saw_freddy
 
 IF %VIEW%==CAMS (
 	>cams_state SET /P "=%CAMS_STATE%" <NUL
@@ -426,6 +426,7 @@ IF /I %CHOICE.INPUT%==SPACE (
 	IF %VIEW%==OFFICE (
 		SET L_LIGHTS=0
 		SET R_LIGHTS=0
+		>office_states SET /P "=%STATES%" <NUL
 		START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan ^& EXIT >NUL
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START Buzz_Fan_Florescent2.mp3 fan2 True 8 ^& EXIT >NUL 2>&1
 		START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_up.mp3 camera_up False 100 ^& EXIT >NUL
@@ -802,7 +803,7 @@ TIMEOUT /T 9 /NOBREAK >NUL
 GOTO :LAUNCH
 
 :WIN
-DEL /Q ".\SEEN_FOXY"
+TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP sfx ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan ^& EXIT >NUL
 START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan2 ^& EXIT >NUL
@@ -822,12 +823,11 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" STOP golden ^& EXIT >NUL
 	DEL /Q ".\WIN"
 CALL ".\audiomanager.cmd" START chimes2.mp3 sfx False 100
 TYPE ".\assets\5am.ans" > CON
-TASKKILL /F /FI "WINDOWTITLE eq FNaF Events - TIME: *" /IM "cmd.exe" /T >NUL 2>&1
 TIMEOUT /T 4 /NOBREAK >NUL
 CALL ".\audiomanager.cmd" START CROWD_SMALL_CHIL_EC049202.mp3 sfx False 100
 CALL ".\assets\6am.cmd"
 TIMEOUT /T 7 >NUL
-START /B "" CMD /C CALL ".\audiomanager.cmd" STOP sfx ^& EXIT >NUL
+CALL ".\audiomanager.cmd" STOP sfx
 
 IF %freddy[level]% LEQ 4 SET /A freddy[level]+=1
 IF %freddy[level]% LEQ 5 (
