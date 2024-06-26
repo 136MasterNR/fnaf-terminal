@@ -141,9 +141,9 @@ IF "%DIFFICULTY%"=="20 20 20 20" (
 :GAME
 IF %freddy[level]% EQU 1 SET DIFFICULTY=0 0 0 0
 IF %freddy[level]% EQU 2 SET DIFFICULTY=0 1 1 1
-IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 4
-IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 5
-IF %freddy[level]% EQU 5 SET DIFFICULTY=3 7 7 6
+IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 5
+IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 7
+IF %freddy[level]% EQU 5 SET DIFFICULTY=3 7 7 9
 IF %CHOICE.INPUT%.==. SET DIFFICULTY=20 20 20 20
 
 CALL ".\audiomanager.cmd" START ambience2.mp3 ambience True 90
