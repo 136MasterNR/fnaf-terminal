@@ -26,7 +26,7 @@ After the download is complete, extract and run the batch file `main.bat`.
 This project is only available on Windows, with a required command line version at least 10.0.1 and higher.
 
 **Recommended Command Prompt settings**:
-- **Font size**: 18 or 20 (for 1080p displays), 13 (for 720p displays)
+- **Font size**: 18 or 19 (for 1080p displays), 13 (for 720p displays)
 - **Font family**: Consolas
 
 This project uses [ANSI](https://www.robvanderwoude.com/ansi.php) as a text formatter. This is how images are rendered.
@@ -58,6 +58,7 @@ This project uses [ANSI](https://www.robvanderwoude.com/ansi.php) as a text form
 ![image](https://github.com/136MasterNR/fnaf-terminal/assets/62593379/5cb17f79-0219-4a91-bbcf-289a3b071b29)
 
 Credits to [Office remake](https://www.reddit.com/r/fivenightsatfreddys/comments/gqd36m/fnaf1_office_remake/) for the office assets.
+
 
 ![image](https://github.com/136MasterNR/fnaf-terminal/assets/62593379/934f9013-6e66-4f11-bda5-c03c00ad4eff)
 
