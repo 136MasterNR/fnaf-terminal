@@ -141,9 +141,9 @@ IF "%DIFFICULTY%"=="20 20 20 20" (
 :GAME
 IF %freddy[level]% EQU 1 SET DIFFICULTY=0 0 0 0
 IF %freddy[level]% EQU 2 SET DIFFICULTY=0 1 1 1
-IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 5
-IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 7
-IF %freddy[level]% EQU 5 SET DIFFICULTY=3 7 7 9
+IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 4
+IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 5
+IF %freddy[level]% EQU 5 SET DIFFICULTY=3 7 7 8
 IF %CHOICE.INPUT%.==. SET DIFFICULTY=20 20 20 20
 
 CALL ".\audiomanager.cmd" START ambience2.mp3 ambience True 90
@@ -566,10 +566,13 @@ IF %CHOICE.INPUT%==TIMEOUT (
 			IF NOT %OLD_FOXY% EQU !FOXY! IF !FOXY! EQU 3 ENDLOCAL&GOTO :RE
 			IF NOT %OLD_FOXY% EQU !FOXY! IF !FOXY! EQU 4 (
 				ENDLOCAL
-				SET VIEW=OFFICE
 				SET /A FOXY+=1
+				DEL /Q ".\cams_state"
+				START /B "" CMD /C CALL ".\audiomanager.cmd" STOP fan2 ^& EXIT >NUL
+				START /B "" CMD /C CALL ".\audiomanager.cmd" START Buzz_Fan_Florescent2.mp3 fan True 25 ^& EXIT >NUL 2>&1
 				START /B "" CMD /C CALL ".\audiomanager.cmd" START camera_down.mp3 camera_down False 100 ^& EXIT >NUL
 				START /B "" CMD /C CALL ".\audiomanager.cmd" STOP camera_up ^& EXIT >NUL
+				SET VIEW=OFFICE
 				GOTO :RE
 			)
 			IF NOT %OLD_BONNIE% EQU !BONNIE! IF !OLD_BONNIE! EQU 4 ENDLOCAL&GOTO :RE
