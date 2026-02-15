@@ -36,7 +36,7 @@ This project uses [ANSI](https://www.robvanderwoude.com/ansi.php) as a text form
     - ***W***/***1***/***N***: Select "New Game".
     - ***S***/***2***/***C***: Select "Continue".
     - ***A***/***Space***/***Enter***: Start the night.
-    - ***` or ~***: Enter Custom Night mode.
+    - ***`*** or ***~***: Enter Custom Night mode.
   - **Night (During Gameplay)**:
     - ***Q***: Close/Open left door. (Toggle)
     - ***S***: Open/Close left lights. (Toggle)
