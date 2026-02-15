@@ -36,7 +36,7 @@ This project uses [ANSI](https://www.robvanderwoude.com/ansi.php) as a text form
     - ***W***/***1***/***N***: Select "New Game".
     - ***S***/***2***/***C***: Select "Continue".
     - ***A***/***Space***/***Enter***: Start the night.
-    - ***CTRL + S***: Activate 20/20/20/20 mode.
+    - ***` or ~***: Enter Custom Night mode.
   - **Night (During Gameplay)**:
     - ***Q***: Close/Open left door. (Toggle)
     - ***S***: Open/Close left lights. (Toggle)
@@ -55,12 +55,21 @@ This project uses [ANSI](https://www.robvanderwoude.com/ansi.php) as a text form
 # Screenshots
 <br/>
 
-![image](https://github.com/136MasterNR/fnaf-terminal/assets/62593379/5cb17f79-0219-4a91-bbcf-289a3b071b29)
-
 Credits to [Office remake](https://www.reddit.com/r/fivenightsatfreddys/comments/gqd36m/fnaf1_office_remake/) for the office assets.
 
+![image](https://github.com/136MasterNR/fnaf-terminal/assets/62593379/5cb17f79-0219-4a91-bbcf-289a3b071b29)
+
+<br/>
+
+Creepy Animatronics...
 
 ![image](https://github.com/136MasterNR/fnaf-terminal/assets/62593379/934f9013-6e66-4f11-bda5-c03c00ad4eff)
+
+<br/>
+
+Now with Custom Night!
+
+![image](https://gitlab.com/rafu-studio/battles-of-batch/-/raw/main/img/4965_PTJYk.png)
 
 ## 
 

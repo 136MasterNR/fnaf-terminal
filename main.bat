@@ -85,6 +85,8 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" START static2.mp3 title False 75 ^&
 
 TYPE ".\assets\title%TITLE_STATE%_o.ans"
 :TITLE
+SET CUSTOM=
+SET DIFFICULTY=
 TYPE ".\assets\title%TITLE_STATE%.ans" > CON
 IF %TITLE_STATE%==_continue_half ECHO.[49;17H%RGB%0;0;0mNight %freddy[level]%
 IF %TITLE_STATE%==_continue ECHO.[49;17H%RGB%0;0;0mNight %freddy[level]%
@@ -99,9 +101,13 @@ IF %CHOICE.INPUT%==SPACE (
 IF /I %CHOICE.INPUT%==A (
 	GOTO :START
 )
-IF /I %CHOICE.INPUT%== (
-	SET DIFFICULTY=20 20 20 20
-	GOTO :START
+IF /I %CHOICE.INPUT%==` (
+	SET C_FREDDY=20
+	SET C_BONNIE=20
+	SET C_CHICA=20
+	SET C_FOXY=20
+	IF %freddy[level]% GTR 1 ( SET TITLE_STATE=_continue ) ELSE SET TITLE_STATE=_new
+	GOTO :CUSTOM_NIGHT
 )
 
 IF /I %CHOICE.INPUT%==S SET TITLE_STATE=_continue_half
@@ -112,6 +118,58 @@ IF /I %CHOICE.INPUT%==1 SET TITLE_STATE=_new_half
 IF /I %CHOICE.INPUT%==2 SET TITLE_STATE=_continue_half
 
 GOTO :TITLE
+
+:CUSTOM_NIGHT
+SET CUSTOM=TRUE
+TYPE ".\assets\custom_night.ans" > CON
+
+ECHO.[35;28H[s
+TYPE ".\assets\%C_FREDDY%.ans" > CON
+ECHO.[35;69H[s
+TYPE ".\assets\%C_BONNIE%.ans" > CON
+ECHO.[35;110H[s
+TYPE ".\assets\%C_CHICA%.ans" > CON
+ECHO.[35;150H[s
+TYPE ".\assets\%C_FOXY%.ans" > CON
+
+CALL .\choice.cmd
+IF %CHOICE.INPUT%==SPACE (
+	SET DIFFICULTY=%C_FREDDY% %C_BONNIE% %C_CHICA% %C_FOXY%
+	GOTO :START
+)
+IF /I %CHOICE.INPUT%==A (
+	IF %C_FREDDY% GTR 0 SET /A C_FREDDY-=1
+)
+IF /I %CHOICE.INPUT%==S (
+	IF %C_FREDDY% LSS 20 SET /A C_FREDDY+=1
+)
+
+IF /I %CHOICE.INPUT%==D (
+	IF %C_BONNIE% GTR 0 SET /A C_BONNIE-=1
+)
+IF /I %CHOICE.INPUT%==F (
+	IF %C_BONNIE% LSS 20 SET /A C_BONNIE+=1
+)
+
+IF /I %CHOICE.INPUT%==G (
+	IF %C_CHICA% GTR 0 SET /A C_CHICA-=1
+)
+IF /I %CHOICE.INPUT%==H (
+	IF %C_CHICA% LSS 20 SET /A C_CHICA+=1
+)
+
+IF /I %CHOICE.INPUT%==J (
+	IF %C_FOXY% GTR 0 SET /A C_FOXY-=1
+)
+IF /I %CHOICE.INPUT%==K (
+	IF %C_FOXY% LSS 20 SET /A C_FOXY+=1
+)
+
+IF /I %CHOICE.INPUT%==` (
+	GOTO :TITLE
+)
+
+GOTO :CUSTOM_NIGHT
 
 :START
 CALL ".\audiomanager.cmd" STOP title
@@ -129,7 +187,7 @@ IF "%DIFFICULTY%"=="20 20 20 20" (
 	TYPE ".\assets\twenty.ans" > CON
 	TIMEOUT /T 3 >NUL
 	START /B "" CMD /C CALL ".\audiomanager.cmd" STOP sfx ^& EXIT >NUL 2>&1
-) ELSE IF %freddy[level]% EQU 1 (
+) ELSE IF %freddy[level]% EQU 1 IF NOT DEFINED CUSTOM (
 	TYPE ".\assets\newspaper.ans" > CON
 	TIMEOUT /T 5 >NUL
 	TYPE ".\assets\night_%freddy[level]%.ans" > CON
@@ -139,12 +197,13 @@ IF "%DIFFICULTY%"=="20 20 20 20" (
 )
 
 :GAME
-IF %freddy[level]% EQU 1 SET DIFFICULTY=0 0 0 0
-IF %freddy[level]% EQU 2 SET DIFFICULTY=0 1 1 1
-IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 4
-IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 5
-IF %freddy[level]% EQU 5 SET DIFFICULTY=3 7 7 8
-IF %CHOICE.INPUT%.==. SET DIFFICULTY=20 20 20 20
+IF NOT DEFINED CUSTOM (
+	IF %freddy[level]% EQU 1 SET DIFFICULTY=0 0 0 0
+	IF %freddy[level]% EQU 2 SET DIFFICULTY=0 1 1 1
+	IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 4
+	IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 5
+	IF %freddy[level]% EQU 5 SET DIFFICULTY=3 7 7 8
+)
 
 CALL ".\audiomanager.cmd" START ambience2.mp3 ambience True 90
 CALL ".\audiomanager.cmd" START voiceover%freddy[level]%.mp3 voiceover False 75
@@ -286,6 +345,8 @@ IF %VIEW%==CAMS (
 		BREAK>SEEN_FOXY
 	)
 )
+
+ECHO.[52;160HCustom Night: %C_FREDDY% %C_BONNIE% %C_CHICA% %C_FOXY%[1A
 
 :CHOICE
 :: Update battery and time
