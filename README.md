@@ -30,6 +30,8 @@ This project is only available on Windows, with a required command line version 
 - **Font family**: Consolas
 
 This project uses [ANSI](https://www.robvanderwoude.com/ansi.php) as a text formatter. This is how images are rendered.
+
+The binary [mpg123](https://github.com/libsdl-org/mpg123) is required for audio playback. There is no native way to playback audio without an external binary.
 # About
 ## Game Controls
   - **Title Screen**: 
