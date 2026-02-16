@@ -68,9 +68,9 @@ MODE CON: COLS=185 LINES=52
 IF NOT EXIST "%APPDATA%\fnaf-terminal" MD "%APPDATA%\fnaf-terminal"
 IF NOT EXIST "%APPDATA%\fnaf-terminal" ECHO.Unable to read or write in "%APPDATA%"&PAUSE>NUL&EXIT 1
 IF NOT EXIST "%APPDATA%\fnaf-terminal\freddy" (
-	ECHO.[freddy]
-	ECHO.level=1
-)>"%APPDATA%\fnaf-terminal\freddy"
+	SET freddy[level]=1
+	CALL ".\io.cmd" SAVE
+)
 IF NOT EXIST "%APPDATA%\fnaf-terminal\freddy" ECHO.Unable to read or write in "%APPDATA%\freddy"&PAUSE>NUL&EXIT 1
 
 CALL ".\io.cmd" READ "%APPDATA%\fnaf-terminal\freddy" freddy
@@ -84,13 +84,32 @@ START /B "" CMD /C CALL ".\audiomanager.cmd" START coldprescb.mp3 title True 75 
 START /B "" CMD /C CALL ".\audiomanager.cmd" START static2.mp3 title False 75 ^& EXIT >NUL 2>&1
 
 TYPE ".\assets\title%TITLE_STATE%_o.ans"
+
 :TITLE
 SET CUSTOM=
 SET DIFFICULTY=
+
 TYPE ".\assets\title%TITLE_STATE%.ans" > CON
-IF %TITLE_STATE%==_continue_half ECHO.[49;17H%RGB%0;0;0mNight %freddy[level]%
-IF %TITLE_STATE%==_continue ECHO.[49;17H%RGB%0;0;0mNight %freddy[level]%
+
+IF %TITLE_STATE%==_continue_half IF %freddy[level]% LEQ 5 (ECHO.[49;17H%RGB%0;0;0mNight %freddy[level]%) ELSE ECHO.[49;17H%RGB%0;0;0mNight 5
+IF %TITLE_STATE%==_continue IF %freddy[level]% LEQ 5 (ECHO.[49;17H%RGB%0;0;0mNight %freddy[level]%) ELSE ECHO.[49;17H%RGB%0;0;0mNight 5
+
+IF %freddy[level]% GEQ 5 (
+	ECHO.[43;166H[s
+	IF %TITLE_STATE%==_new TYPE .\assets\star.ans> CON
+	IF %TITLE_STATE%==_continue TYPE .\assets\star.ans> CON
+)
+
+IF %freddy[level]% GEQ 6 (
+	ECHO.[33;166H[s
+	IF %TITLE_STATE%==_new TYPE .\assets\star.ans> CON
+	IF %TITLE_STATE%==_continue TYPE .\assets\star.ans> CON
+)
+
 IF NOT %TITLE_STATE%==_continue_half IF NOT %TITLE_STATE%==_continue ECHO.[49;17H%RGB%0;0;0m       
+
+IF NOT %TITLE_STATE:~-5%==_half SET TITLE_STATE=%TITLE_STATE%_half
+  
 CALL .\choice.cmd
 IF %CHOICE.INPUT%.==. (
 	GOTO :START
@@ -106,7 +125,7 @@ IF /I %CHOICE.INPUT%==` (
 	SET C_BONNIE=20
 	SET C_CHICA=20
 	SET C_FOXY=20
-	IF %freddy[level]% GTR 1 ( SET TITLE_STATE=_continue ) ELSE SET TITLE_STATE=_new
+	IF %freddy[level]% GTR 1 (SET TITLE_STATE=_continue) ELSE SET TITLE_STATE=_new
 	GOTO :CUSTOM_NIGHT
 )
 
@@ -134,7 +153,7 @@ TYPE ".\assets\%C_FOXY%.ans" > CON
 
 CALL .\choice.cmd
 IF %CHOICE.INPUT%==SPACE (
-	SET DIFFICULTY=%C_FREDDY% %C_BONNIE% %C_CHICA% %C_FOXY%
+	SET DIFFICULTY=%C_FREDDY% %C_CHICA% %C_BONNIE% %C_FOXY%
 	GOTO :START
 )
 IF /I %CHOICE.INPUT%==A (
@@ -174,11 +193,8 @@ GOTO :CUSTOM_NIGHT
 :START
 CALL ".\audiomanager.cmd" STOP title
 IF %TITLE_STATE:~0,4%==_new (
-	(
-		ECHO.[freddy]
-		ECHO.level=1
-	)>"%APPDATA%\fnaf-terminal\freddy"
 	SET freddy[level]=1
+	CALL ".\io.cmd" SAVE
 )
 
 :NEWSPAPER
@@ -187,12 +203,12 @@ IF "%DIFFICULTY%"=="20 20 20 20" (
 	TYPE ".\assets\twenty.ans" > CON
 	TIMEOUT /T 3 >NUL
 	START /B "" CMD /C CALL ".\audiomanager.cmd" STOP sfx ^& EXIT >NUL 2>&1
-) ELSE IF %freddy[level]% EQU 1 IF NOT DEFINED CUSTOM (
+) ELSE IF NOT DEFINED CUSTOM IF %freddy[level]% EQU 1 (
 	TYPE ".\assets\newspaper.ans" > CON
 	TIMEOUT /T 5 >NUL
 	TYPE ".\assets\night_%freddy[level]%.ans" > CON
 ) ELSE (
-	TYPE ".\assets\night_%freddy[level]%.ans" > CON
+	IF %freddy[level]% GTR 5 (TYPE ".\assets\night_5.ans" > CON) ELSE TYPE ".\assets\night_%freddy[level]%.ans" > CON
 	TIMEOUT /T 3 >NUL
 )
 
@@ -202,17 +218,17 @@ IF NOT DEFINED CUSTOM (
 	IF %freddy[level]% EQU 2 SET DIFFICULTY=0 1 1 1
 	IF %freddy[level]% EQU 3 SET DIFFICULTY=0 3 3 4
 	IF %freddy[level]% EQU 4 SET DIFFICULTY=1 4 4 5
-	IF %freddy[level]% EQU 5 SET DIFFICULTY=3 7 7 8
+	IF %freddy[level]% GEQ 5 SET DIFFICULTY=3 7 7 8
 )
 
 CALL ".\audiomanager.cmd" START ambience2.mp3 ambience True 90
-CALL ".\audiomanager.cmd" START voiceover%freddy[level]%.mp3 voiceover False 75
+IF NOT DEFINED CUSTOM CALL ".\audiomanager.cmd" START voiceover%freddy[level]%.mp3 voiceover False 75
 START /B "" CMD /C CALL ".\audiomanager.cmd" START Buzz_Fan_Florescent2.mp3 fan True 25 ^& EXIT >NUL 2>&1
 
 START /MIN .\events.cmd %DIFFICULTY%
 
 :: UI
-SET TAB=0
+IF DEFINED CUSTOM (SET TAB=1) ELSE SET TAB=0
 SET REVERSE=
 SET R_DOOR=0
 SET L_DOOR=0
@@ -346,7 +362,7 @@ IF %VIEW%==CAMS (
 	)
 )
 
-ECHO.[52;160HCustom Night: %C_FREDDY% %C_BONNIE% %C_CHICA% %C_FOXY%[1A
+IF DEFINED CUSTOM ECHO.[52;160HCustom Night: %C_FREDDY% %C_BONNIE% %C_CHICA% %C_FOXY%[1A
 
 :CHOICE
 :: Update battery and time
@@ -895,8 +911,14 @@ CALL ".\audiomanager.cmd" STOP sfx
 
 IF %freddy[level]% LEQ 4 SET /A freddy[level]+=1
 IF %freddy[level]% LEQ 5 (
-	ECHO.[freddy]
-	ECHO.level=%freddy[level]%
-)>"%APPDATA%\fnaf-terminal\freddy"
+	CALL ".\io.cmd" SAVE
+)
+
+IF "%DIFFICULTY%"=="20 20 20 20" (
+	IF %freddy[level]% LEQ 5 SET /A freddy[level]+=1
+	IF %freddy[level]% LEQ 6 (
+		CALL ".\io.cmd" SAVE
+	)
+)
 
 GOTO :LAUNCH
